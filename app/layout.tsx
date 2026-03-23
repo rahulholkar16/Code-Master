@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/provider/query-provider";
 import { CircleX } from "lucide-react";
 import { ThemeProvider } from "@/components/provider/theme-provider";
-import { useSession } from "@/modules/auth/hooks/useSession";
 import AuthLayer from "@/modules/auth/components/auth-layer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
@@ -26,7 +25,6 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    useSession();
     return (
         <html
             lang="en"
