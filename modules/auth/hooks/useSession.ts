@@ -9,13 +9,15 @@ export const useSession = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["session"],
         queryFn: fetchSession,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 0,
         retry: false,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
     });
-
+    
     useEffect(() => {
         if (data) {
-            setUser(data?.user || null);
+            setUser(data?.user ?? null);
         }
     }, [data, setUser]);
 
