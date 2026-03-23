@@ -9,7 +9,6 @@ import { AvatarDropdown } from "./AvatarDrop";
 
 const Navbar = () => {
     const user = useAuthStore(s => s.user);
-    console.log("USERSSS", user);
     const isLoggedIn = useAuthStore(s => s.isAuthenticated);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     return (
