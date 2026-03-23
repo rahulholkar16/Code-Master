@@ -1,15 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuSeparator,
-    DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { AvatarDropdownProp } from "@/types";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export function AvatarDropdown({ user }: AvatarDropdownProp) {
     const { signOut } = useAuth();
