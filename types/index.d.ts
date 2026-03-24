@@ -58,3 +58,10 @@ interface ProtectedLayerProp {
 interface ProtectedLayoutProp {
     children: ReactNode
 }
+
+interface SUBMISSION {
+    source_code: unknown;
+    language_id: number;
+    stdin: any;
+    expected_output: number;
+}
