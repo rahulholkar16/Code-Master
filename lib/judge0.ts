@@ -1,6 +1,5 @@
-import { SUBMISSION } from '@/types';
+import { SUBMISSION, SubmitBatchResponse } from '@/types';
 import axios from 'axios';
-import { base64 } from 'better-auth';
 
 export function getJudge0LanguageId(language: string): number {
     const languageMap: Record<string, number> = {
@@ -14,7 +13,7 @@ export function getJudge0LanguageId(language: string): number {
     return languageMap[language.toUpperCase()];
 };
 
-export async function submitBatch(submission: Array<SUBMISSION>) {
+export async function submitBatch(submission: Array<SUBMISSION>): Promise<SubmitBatchResponse> {
     const { data } = await axios.post(
         `${process.env.JUDGE0_API}/submissions/batch?base64_encoded=false`,
         {
@@ -26,22 +25,22 @@ export async function submitBatch(submission: Array<SUBMISSION>) {
 }
 
 export async function pollBatchResults(tokens: Array<string>) {
-    while (true) {
-        const { data } = await axios.get(`${process.env.JUDGE0_API}/submissions/batch`, {
-            params: {
-                tokens: tokens.join(","),
-                base64_encoded: false,
-            }
-        });
+    let results;
+    for (let i = 0; i < 10; i++) {
+        const res = await axios.get(
+            `${process.env.JUDGE0_API}/submissions/batch?tokens=${tokens.join(",")}&base64_encoded=false`
+        );
 
-        console.log(data);
+        results = res.data.submissions;
 
-        const results = data.submissions;
-        if (results.length === tokens.length) return results;
-        const isAllDone = results.every((r) => r.status.id !== 1 && r.status.id !== 2);
-        if (isAllDone) return results;
+        const allDone = results.every(r => r.status.id !== 1 && r.status.id !== 2);
+
+        if (allDone) return results;
+
         await sleep(1000);
     }
+
+    throw new Error("Judge0 timeout");
 };
 
-export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
