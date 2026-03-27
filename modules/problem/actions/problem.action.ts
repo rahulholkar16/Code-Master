@@ -38,15 +38,6 @@ export const getAllProblem = async () => {
 
 export const getProblemById = async (id: string) => {
     try {
-        const session = await auth.api.getSession({
-            headers: await headers(),
-        });
-
-        if (!session) return {
-            success: false,
-            message: "Unauthorized",
-        }
-
         const problem = await db.problem.findUnique({
             where: {
                 id: id
