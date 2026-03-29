@@ -106,6 +106,22 @@ export type CodeSnippet = {
 };
 
 export type Problem = {
+    id: string;
+    slug: string;
+    title: string;
+    description: string;
+    difficulty: Difficulty;
+    tags: string[];
+    examples: Example[];
+    constraints: string[];
+    testCases: TestCase[];
+    codeSnippets: Record<string, string>;
+    referenceSolution: Record<string, string>;
+    createdAt?: Date;
+    updatedAt?: Date;
+};
+
+export type CreateProblemInput = {
     title: string;
     description: string;
     difficulty: Difficulty;
