@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 
-// =========================
-// SHARED
-// =========================
+/**
+ * Common Types 
+*/
 export interface ChildrenProps {
     children: ReactNode;
 }
@@ -13,9 +13,9 @@ export type ActionResponse<T> = {
     message?: string;
 };
 
-// =========================
-// AUTH
-// =========================
+/**
+ * AUTH Types 
+*/
 export type Role = "USER" | "ADMIN";
 
 export interface User {
@@ -49,9 +49,9 @@ export interface AvatarDropdownProp {
     user: User | null;
 }
 
-// =========================
-// JUDGE0
-// =========================
+/**
+ * JUDGE0 Types
+*/
 export interface Submission {
     source_code: string;
     language_id: number;
@@ -83,136 +83,29 @@ export interface PollBatchResponse {
     submissions: Judge0Result[];
 }
 
-// =========================
-// PROBLEM DOMAIN
-// =========================
-export type Difficulty = "EASY" | "MEDIUM" | "HARD";
+/**
+ * Problem Types 
+*/
 
-export type Example = {
-    input: string;
-    output: string;
-    explanation?: string;
-};
+enum Difficulty {
+    EASY,
+    MEDIUM,
+    HARD
+}
 
-export type TestCase = {
-    input: string;
-    output: string;
-    isHidden: boolean;
-};
-
-export type CodeSnippet = {
-    language: string;
-    code: string;
-};
-
-export type Problem = {
-    id: string;
-    slug: string;
+interface CreateProblem {
     title: string;
-    description: string;
-    difficulty: Difficulty;
-    tags: string[];
-    examples: Example[];
-    constraints: string[];
-    testCases: TestCase[];
-    codeSnippets: Record<string, string>;
-    referenceSolution: Record<string, string>;
-    createdAt?: Date;
-    updatedAt?: Date;
-};
-
-export type CreateProblemInput = {
-    title: string;
-    description: string;
-    difficulty: Difficulty;
-    tags: string[];
-    examples: Example[];
-    constraints: string;
-    testCases: TestCase[];
-    codeSnippets: Record<string, string>;
-    referenceSolution: Record<string, string>;
-};
-
-// =========================
-// INTERNAL UI TYPES
-// =========================
-export interface InternalExample extends Example {
-    id: string;
+    diffculty: Difficulty;
+    tags: Array<string>;
 }
 
-export interface InternalTestCase extends TestCase {
-    id: string;
-    explanation?: string;
-}
-
-export interface InternalCodeSnippet extends CodeSnippet {
-    id: string;
-}
-
-// =========================
-// COMPONENT PROPS
-// =========================
-export interface BasicInformationProps {
+interface ProblemUIStore {
     title: string;
     difficulty: Difficulty;
-    tags: string[];
-    tagInput: string;
-    onTitleChange: (value: string) => void;
-    onDifficultyChange: (value: Difficulty) => void;
-    onTagInputChange: (value: string) => void;
-    onAddTag: () => void;
-    onRemoveTag: (tag: string) => void;
-    onTagKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-}
+    tags: Array<string> | [];
 
-export interface ProblemDescriptionProps {
-    description: string;
-    constraints: string;
-    onDescriptionChange: (value: string) => void;
-    onConstraintsChange: (value: string) => void;
-}
-
-export interface ExamplesSectionProps {
-    examples: InternalExample[];
-    onAddExample: () => void;
-    onRemoveExample: (id: string) => void;
-    onUpdateExample: (
-        id: string,
-        field: keyof Example,
-        value: string
-    ) => void;
-}
-
-export interface TestCasesSectionProps {
-    testCases: InternalTestCase[];
-    onAddTestCase: () => void;
-    onRemoveTestCase: (id: string) => void;
-    onUpdateTestCase: (
-        id: string,
-        field: keyof TestCase | "explanation",
-        value: string | boolean
-    ) => void;
-}
-
-export interface CodeSnippetsSectionProps {
-    codeSnippets: InternalCodeSnippet[];
-    languages: string[];
-    onAddCodeSnippet: () => void;
-    onRemoveCodeSnippet: (id: string) => void;
-    onUpdateCodeSnippet: (
-        id: string,
-        field: keyof CodeSnippet,
-        value: string
-    ) => void;
-}
-
-export interface ReferenceSolutionSectionProps {
-    referenceSolution: string;
-    onReferenceSolutionChange: (value: string) => void;
-}
-
-interface ProblmStore {
-    problems: Problem[] | null;
-    setProblems: (problems: Problem[]) => void;
-    setProblem: (problem: Problem) => void;
+    setTitle: (title: string) => void;
+    setTag: (tag: string) => void;
+    setDifficulty: (difficulty: Difficulty) => void;
+    removeTag: (tag: string) => void;
 }
