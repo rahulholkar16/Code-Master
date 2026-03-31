@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/modules/auth/store/auth-store";
 import {
@@ -14,15 +13,6 @@ import {
     TestCasesSection,
 } from "@/modules/problem/components";
 import { languages } from "@/modules/problem/constant";
-import {
-    CodeSnippet,
-    Difficulty,
-    Example,
-    InternalCodeSnippet,
-    InternalExample,
-    InternalTestCase,
-    TestCase,
-} from "@/types";
 import { useProblem } from "../../hooks/useProblem";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
 
