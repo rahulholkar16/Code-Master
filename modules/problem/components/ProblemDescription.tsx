@@ -1,14 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ProblemDescriptionProps } from "@/types";
+import { useEffect, useState } from "react";
+import { useUiProblmStore } from "../stores/problem-ui-store";
 
-export function ProblemDescription({
-    description,
-    constraints,
-    onDescriptionChange,
-    onConstraintsChange,
-}: ProblemDescriptionProps) {
+export function ProblemDescription() {
+    const description = useUiProblmStore(s => s.description);
+    const setDescription = useUiProblmStore(s => s.setDescription);
+    const [localDescription, setLoaclDescription] = useState(description)
+    
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDescription(localDescription);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [localDescription, setDescription]);
+    
     return (
         <Card>
             <CardHeader>
@@ -23,8 +30,8 @@ export function ProblemDescription({
                     <Textarea
                         id="description"
                         placeholder="Describe the problem in detail..."
-                        value={description}
-                        onChange={(e) => onDescriptionChange(e.target.value)}
+                        value={localDescription}
+                        onChange={(e) => setLoaclDescription(e.target.value)}
                         rows={8}
                         required
                     />
