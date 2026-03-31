@@ -53,7 +53,7 @@ export function ProblemDescription() {
                     <Textarea
                         id="constraints"
                         placeholder="• 2 ≤ nums.length ≤ 10⁴&#10;• -10⁹ ≤ nums[i] ≤ 10⁹&#10;• -10⁹ ≤ target ≤ 10⁹"
-                        value={constraints}
+                        value={locatConstraints}
                         onChange={(e) => setLocalConstraints(e.target.value)}
                         rows={5}
                         required
