@@ -24,6 +24,7 @@ import {
     TestCase,
 } from "@/types";
 import { useProblem } from "../../hooks/useProblem";
+import { useUiProblmStore } from "../../stores/problem-ui-store";
 
 export function CreateProblemView() {
     // SAMPLE
@@ -64,21 +65,14 @@ export function CreateProblemView() {
         },
     };
 
+    const title = useUiProblmStore(s => s.title);
+    const tags = useUiProblmStore(s => s.tags);
+    co
 
     const { createProblem, isCreateProblem: isLoading } = useProblem();
     const router = useRouter();
     const isAdmin = useAuthStore((s) => s.user?.role === "ADMIN");
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        difficulty: "MEDIUM" as Difficulty,
-        constraints: "",
-        referenceSolution: "",
-    });
-
-    const [tags, setTags] = useState<string[]>([]);
-    const [tagInput, setTagInput] = useState("");
-
+    
     const [examples, setExamples] = useState<InternalExample[]>([
         { id: "1", input: "", output: "", explanation: "" },
     ]);
@@ -98,26 +92,6 @@ export function CreateProblemView() {
     }, [isAdmin, router]);
 
     if (!isAdmin) return null;
-
-    // Tags
-    const addTag = () => {
-        const trimmed = tagInput.trim();
-        if (trimmed && !tags.includes(trimmed)) {
-            setTags([...tags, trimmed]);
-            setTagInput("");
-        }
-    };
-
-    const removeTag = (tagToRemove: string) => {
-        setTags(tags.filter((tag) => tag !== tagToRemove));
-    };
-
-    const handleTagKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            addTag();
-        }
-    };
 
     // Examples
     const addExample = () => {
@@ -204,21 +178,6 @@ export function CreateProblemView() {
         );
     };
 
-    const fillSampleProblem = () => {
-        setFormData({
-            title: sampleProblem.title,
-            description: sampleProblem.description,
-            difficulty: sampleProblem.difficulty,
-            constraints: sampleProblem.constraints,
-            referenceSolution: sampleProblem.referenceSolutions.JAVASCRIPT,
-        });
-
-        setTags(sampleProblem.tags);
-        setExamples(sampleProblem.examples);
-        setTestCases(sampleProblem.testCases);
-        setCodeSnippets(sampleProblem.codeSnippets);
-    };
-
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -270,22 +229,8 @@ export function CreateProblemView() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <BasicInformation
-                        title={formData.title}
-                        difficulty={formData.difficulty}
-                        tags={tags}
-                        tagInput={tagInput}
-                        onTitleChange={(value) =>
-                            setFormData({ ...formData, title: value })
-                        }
-                        onDifficultyChange={(value) =>
-                            setFormData({ ...formData, difficulty: value })
-                        }
-                        onTagInputChange={setTagInput}
-                        onAddTag={addTag}
-                        onRemoveTag={removeTag}
-                        onTagKeyPress={handleTagKeyPress}
-                    />
+                    {/* Basic Info Form */}
+                    <BasicInformation />
 
                     <ProblemDescription
                         description={formData.description}
