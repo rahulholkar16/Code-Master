@@ -97,15 +97,19 @@ interface CreateProblem {
     title: string;
     diffculty: Difficulty;
     tags: Array<string>;
+    description: string;
 }
 
 interface ProblemUIStore {
     title: string;
     difficulty: Difficulty;
     tags: Array<string> | [];
+    description: string;
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
     setDifficulty: (difficulty: Difficulty) => void;
     removeTag: (tag: string) => void;
+
+    setDescription: (description: string) => void;
 }
