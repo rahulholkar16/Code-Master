@@ -4,7 +4,10 @@ import { ChildrenProps } from '@/types';
 import { useSession } from '../hooks/useSession'
 
 const AuthLayer = ({ children }: ChildrenProps) => {
-    useSession();
+    const {isLoading} = useSession();
+
+    if (isLoading) return <div className='text-center'>Loading...</div>
+
     return (
         <>{children}</>
     )
