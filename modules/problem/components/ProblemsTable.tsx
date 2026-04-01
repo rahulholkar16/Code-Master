@@ -1,24 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Problem } from "@/types";
 import Link from "next/link";
+import { getDifficultyColor } from "../constant";
 
 interface ProblemsTableProps {
     problems: Problem[];
 }
 
 export default function ProblemsTable({ problems }: ProblemsTableProps) {
-    const getDifficultyColor = (difficulty: string) => {
-        switch (difficulty) {
-            case "Easy":
-                return "bg-green-500/10 text-green-500 border-green-500/20";
-            case "Medium":
-                return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
-            case "Hard":
-                return "bg-red-500/10 text-red-500 border-red-500/20";
-            default:
-                return "";
-        }
-    };
 
     if (problems.length === 0) {
         return (
@@ -41,9 +30,6 @@ export default function ProblemsTable({ problems }: ProblemsTableProps) {
                                 Title
                             </th>
                             <th className="text-left p-4 font-semibold">
-                                Acceptance
-                            </th>
-                            <th className="text-left p-4 font-semibold">
                                 Difficulty
                             </th>
                             <th className="text-left p-4 font-semibold">
@@ -52,13 +38,13 @@ export default function ProblemsTable({ problems }: ProblemsTableProps) {
                         </tr>
                     </thead>
                     <tbody>
-                        {problems.map((problem) => (
+                        {problems.map((problem, index) => (
                             <tr
                                 key={problem.id}
                                 className="border-b border-border hover:bg-muted/30 transition-colors"
                             >
                                 <td className="p-4 text-foreground/60">
-                                    {problem.id}
+                                    {index+1}
                                 </td>
                                 <td className="p-4">
                                     <Link
@@ -82,15 +68,17 @@ export default function ProblemsTable({ problems }: ProblemsTableProps) {
                                 </td>
                                 <td className="p-4">
                                     <div className="flex flex-wrap gap-2">
-                                        {problem.tags.map((topic, index) => (
-                                            <Badge
-                                                key={index}
-                                                variant="outline"
-                                                className="text-xs"
-                                            >
-                                                {topic}
-                                            </Badge>
-                                        ))}
+                                        {(problem.tags ?? []).map(
+                                            (topic, index) => (
+                                                <Badge
+                                                    key={index}
+                                                    variant="outline"
+                                                    className="text-xs"
+                                                >
+                                                    {topic.tag.name}
+                                                </Badge>
+                                            ),
+                                        )}
                                     </div>
                                 </td>
                             </tr>
