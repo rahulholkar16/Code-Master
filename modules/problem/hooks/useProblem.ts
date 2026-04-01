@@ -13,7 +13,7 @@ export const useProblem = () => {
                 return;
             }
             toast.success(res.message);
-            router.push("/problem");
+            router.push("/problems");
         },
 
         onError: (error) => {
