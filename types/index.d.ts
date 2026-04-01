@@ -115,6 +115,12 @@ interface CodeSnippet {
     code: string;      
 }
 
+interface ReferenceSolution {
+    id: string;
+    language: Language;
+    code: string;
+}
+
 interface CreateProblem {
     title: string;
     diffculty: Difficulty;
@@ -124,6 +130,7 @@ interface CreateProblem {
     examples: Example[];
     testCase: TestCase[];
     codeSnippets: CodeSnippet[];
+    referenceSolutions: ReferenceSolution[];
 }
 
 interface ProblemUIStore {
@@ -135,6 +142,7 @@ interface ProblemUIStore {
     examples: Example[];
     testCases: TestCase[];
     codeSnippets: CodeSnippet[];
+    referenceSolutions: ReferenceSolution[];
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
@@ -159,4 +167,8 @@ interface ProblemUIStore {
     addCodeSnippet: () => void;
     removeCodeSnippet: (id: string) => void;
     updateCodeSnippet: (id: string, field: keyof Omit<CodeSnippet, "id">, value: string | Language) => void;
+
+    addReferenceSolution: () => void;
+    removeReferenceSolution: (id: string) => void;
+    updateReferenceSolution: (id: string, field: keyof Omit<ReferenceSolution, "id">, value: string | Language) => void;
 }

@@ -1,4 +1,4 @@
-import { CodeSnippet, Difficulty, Example, ProblemUIStore, TestCase } from "@/types";
+import { CodeSnippet, Difficulty, Example, ProblemUIStore, ReferenceSolution, TestCase } from "@/types";
 import { create } from "zustand";
 
 const createEmptyExample = (): Example => ({
@@ -21,6 +21,12 @@ const createEmptyCodeSnippet = (): CodeSnippet => ({
     code: "",
 });
 
+const createEmptyReferenceSolution = (): ReferenceSolution => ({
+    id: crypto.randomUUID(),
+    language: "Javascript",
+    code: "",
+});
+
 export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     title: "",
     difficulty: Difficulty.MEDIUM,
@@ -30,6 +36,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     examples: [createEmptyExample()],
     testCases: [createEmptyTestCase()],
     codeSnippets: [createEmptyCodeSnippet()],
+    referenceSolutions: [createEmptyReferenceSolution()],
 
     setTitle: (title) => set({ title }),
     setTag: (tag) => set((state) => ({
@@ -80,4 +87,13 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
         codeSnippets: state.codeSnippets.map((codeSnippet) => codeSnippet.id === id ? {...codeSnippet, [field]: value} : codeSnippet)
     })),
 
+    addReferenceSolution: () => set((state) => ({
+        referenceSolutions: [...state.referenceSolutions, createEmptyReferenceSolution()]
+    })),
+    removeReferenceSolution: (id) => set((state) => ({
+        referenceSolutions: state.referenceSolutions.length > 1 ? state.referenceSolutions.filter((referenceSolution) => referenceSolution.id !== id) : state.referenceSolutions
+    })),
+    updateReferenceSolution: (id, field, value) => set((state) => ({
+        referenceSolutions: state.referenceSolutions.map((referenceSolution) => referenceSolution.id === id ? {...referenceSolution, [field]: value} : referenceSolution)
+    }))
 }));
