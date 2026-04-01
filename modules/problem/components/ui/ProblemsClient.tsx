@@ -27,7 +27,7 @@ export default function ProblemsClient() {
                 !search ||
                 problem.title.toLowerCase().includes(search) ||
                 problem.tags.some((tag) =>
-                    tag.toLowerCase().includes(search),
+                    tag.tag.name.toLowerCase().includes(search),
                 );
 
             const matchesDifficulty =
@@ -37,7 +37,11 @@ export default function ProblemsClient() {
             const matchesTopics =
                 filters.topics.length === 0 ||
                 filters.topics.some((filterTopic) =>
-                    problem.tags.includes(filterTopic),
+                    (problem.tags ?? []).some(
+                        (tag) =>
+                            tag.tag.name.toLowerCase() ===
+                            filterTopic.toLowerCase(),
+                    ),
                 );
 
             return matchesSearch && matchesDifficulty && matchesTopics;
@@ -95,4 +99,4 @@ export default function ProblemsClient() {
             </div>
         </div>
     );
-};
+}
