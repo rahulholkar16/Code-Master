@@ -1,4 +1,4 @@
-import { CodeSnippet, Difficulty, Example, ProblemUIStore, ReferenceSolution, TestCase } from "@/types";
+import { CodeSnippet, Example, ProblemUIStore, ReferenceSolution, TestCase } from "@/types";
 import { create } from "zustand";
 
 const createEmptyExample = (): Example => ({
@@ -29,7 +29,7 @@ const createEmptyReferenceSolution = (): ReferenceSolution => ({
 
 export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     title: "",
-    difficulty: Difficulty.MEDIUM,
+    difficulty: "MEDIUM",
     tags: [],
     description: "",
     constraints: "",
