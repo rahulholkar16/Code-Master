@@ -2,6 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { useProblmStore } from "../../stores/problem-store";
+import { useGetProblemById } from "../../hooks/useGetProblemById";
 import { ProblemDescription } from "../problem-details/ProblemDescription";
 import { ProblemWorkspace } from "../problem-details/ProblemWorkSpace";
 import { ProblemHeader } from "../problem-details/ProblemHerder";
@@ -11,10 +12,21 @@ interface ProblemDetailViewProps {
 }
 
 export function ProblemDetailView({ id }: ProblemDetailViewProps) {
+    const { isLoading } = useGetProblemById(id);
+
     const problem = useProblmStore((s) => s.problems.find((p) => p.id === id));
 
-    if (!problem) return notFound();
+    if (isLoading && !problem) {
+        return (
+            <div className="h-[calc(100vh-4rem)] flex items-center justify-center">
+                <p className="text-foreground/50 text-sm">Loading...</p>
+            </div>
+        );
+    }
 
+    if (!problem) return notFound();
+    console.log("PROBLEM in DETAIL:: ", problem);
+    
     return (
         <div className="h-[calc(100vh-4rem)] flex border-t border-border bg-muted/20">
             {/* Left Panel */}
