@@ -7,7 +7,6 @@ import { QueryProvider } from "@/components/provider/query-provider";
 import { CircleX } from "lucide-react";
 import { ThemeProvider } from "@/components/provider/theme-provider";
 import AuthLayer from "@/modules/auth/components/auth-layer";
-import ProblemsLayer from "@/modules/problem/components/problems-layer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -41,7 +40,7 @@ export default function RootLayout({
                 >
                     <QueryProvider>
                         <AuthLayer>
-                            <ProblemsLayer>{children}</ProblemsLayer>
+                            {children}
                         </AuthLayer>
                     </QueryProvider>
                 </ThemeProvider>
