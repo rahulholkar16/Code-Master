@@ -59,6 +59,10 @@ export async function POST(request: NextRequest) {
             })
         );
         
+        console.log(
+            "CODE SNIIPETS::", codeSnippets
+        );
+        
 
         const newProblem = await db.problem.create({
             data: {
@@ -112,7 +116,9 @@ export async function POST(request: NextRequest) {
                 },
             },
         });
-
+        
+        console.log("PROBLEM DATA::", newProblem);
+        
         return NextResponse.json({
             success: true,
             data: newProblem
