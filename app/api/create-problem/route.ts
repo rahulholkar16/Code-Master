@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
         if (!Array.isArray(testCases) || testCases.length === 0) return NextResponse.json({ success: false, error: "At least one test case is required" }, { status: 400 });
         if (!referenceSolutions || typeof referenceSolutions !== 'object') return NextResponse.json({ success: false, error: "Reference solution is required" }, { status: 400 });
 
+        console.log("Before subimt code snnipets::", codeSnippets);
+
         await Promise.all(
             Object.entries(referenceSolutions).map(async ([language, solutionCode]) => {
                 const languageId = getJudge0LanguageId(language);
