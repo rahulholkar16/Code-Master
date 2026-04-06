@@ -2,6 +2,9 @@ import { CreateProblem } from "@/types";
 import { problemSchema } from "../validators/problem.validator";
 
 export const createProblem = async (data: CreateProblem) => {
+
+    console.log("LOG of Create Problem API::", data);
+    
     const validated = problemSchema.safeParse(data);
     if (!validated.success) {
         return {
@@ -10,6 +13,8 @@ export const createProblem = async (data: CreateProblem) => {
         };
     }
 
+    console.log("AFTER CREATE API LOGS::", validated.data);
+    
     try {
         const result = await fetch("/api/create-problem", {
             method: "POST",
