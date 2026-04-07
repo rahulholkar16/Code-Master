@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Language, Problem } from "@/types";
 import { useProblmStore } from "../../stores/problem-store";
 import { TestResultPanel } from "./TestResultPanel";
@@ -29,20 +29,29 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         [problem.snippets],
     );
 
-    const defaultLanguage: Language = availableLanguages[0] ?? "Javascript";
-
-    const [language, setLanguage] = useState<Language>(defaultLanguage);
-    const [code, setCode] = useState(
-        () =>
-            problem.snippets?.find((s) => s.language === defaultLanguage)
-                ?.code ?? "",
+    const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+        () => (problem.snippets?.[0]?.language as Language) ?? "Javascript",
     );
+
+    const snippetCode = useMemo(
+        () =>
+            problem.snippets?.find((s) => s.language === selectedLanguage)
+                ?.code ?? "",
+        [problem.snippets, selectedLanguage],
+    );
+
+    const [editorCode, setEditorCode] = useState(snippetCode);
+
+    const prevSnippetRef = useRef(snippetCode);
+    if (prevSnippetRef.current !== snippetCode) {
+        prevSnippetRef.current = snippetCode;
+        setEditorCode(snippetCode);
+    }
+
     const [testResult, setTestResult] = useState<"pass" | "fail" | null>(null);
 
     const handleLanguageChange = (newLang: Language) => {
-        setLanguage(newLang);
-        const snippet = problem.snippets?.find((s) => s.language === newLang);
-        setCode(snippet?.code ?? "");
+        setSelectedLanguage(newLang);
     };
 
     const handleRunCode = () => {
@@ -57,11 +66,11 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         <>
             <div className="flex-1 m-4 rounded-lg border border-border overflow-hidden bg-background">
                 <CodeEditor
-                    language={language}
-                    code={code}
+                    language={selectedLanguage}
+                    code={editorCode}
                     availableLanguages={availableLanguages}
                     onLanguageChange={handleLanguageChange}
-                    onCodeChange={setCode}
+                    onCodeChange={setEditorCode}
                     onRunCode={handleRunCode}
                     onSubmit={handleSubmit}
                 />
