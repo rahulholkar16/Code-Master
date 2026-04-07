@@ -1,10 +1,7 @@
 import { CreateProblem } from "@/types";
 import { problemSchema } from "../validators/problem.validator";
 
-export const createProblem = async (data: CreateProblem) => {
-
-    console.log("LOG of Create Problem API::", data);
-    
+export const createProblem = async (data: CreateProblem) => {    
     const validated = problemSchema.safeParse(data);
     if (!validated.success) {
         return {
@@ -12,8 +9,6 @@ export const createProblem = async (data: CreateProblem) => {
             message: validated.error.issues.map((e) => e.message).join(", "),
         };
     }
-
-    console.log("AFTER CREATE API LOGS::", validated.data);
     
     try {
         const result = await fetch("/api/create-problem", {

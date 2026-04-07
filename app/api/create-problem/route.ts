@@ -25,8 +25,6 @@ export async function POST(request: NextRequest) {
         if (!Array.isArray(testCases) || testCases.length === 0) return NextResponse.json({ success: false, error: "At least one test case is required" }, { status: 400 });
         if (!referenceSolutions || typeof referenceSolutions !== 'object') return NextResponse.json({ success: false, error: "Reference solution is required" }, { status: 400 });
 
-        console.log("Before subimt code snnipets::", codeSnippets);
-
         await Promise.all(
             Object.entries(referenceSolutions).map(async ([language, solutionCode]) => {
                 const languageId = getJudge0LanguageId(language);
@@ -60,11 +58,6 @@ export async function POST(request: NextRequest) {
                 }
             })
         );
-        
-        console.log(
-            "CODE SNIIPETS::", codeSnippets
-        );
-        
 
         const newProblem = await db.problem.create({
             data: {
@@ -118,9 +111,7 @@ export async function POST(request: NextRequest) {
                 },
             },
         });
-        
-        console.log("PROBLEM DATA::", newProblem);
-        
+            
         return NextResponse.json({
             success: true,
             data: newProblem
