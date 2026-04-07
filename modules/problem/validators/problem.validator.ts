@@ -23,9 +23,9 @@ export const problemSchema = z.object({
         })
     ).min(1, "At least 1 example is required."),
     codeSnippets: z.object({
-        JAVASCRIPT: z.string().min(1, { message: "JavaScript code snippet is required." }).optional(),
-        PYTHON: z.string().min(1, { message: "Python code snippet is required." }).optional(),
-        JAVA: z.string().min(1, { message: "Java code snippet is required." }).optional(),
+        Javascript: z.string().min(1, { message: "JavaScript code snippet is required." }),
+        Python: z.string().min(1, { message: "Python code snippet is required." }),
+        Java: z.string().min(1, { message: "Java code snippet is required." }).optional(),
     }),
     referenceSolutions: z.object({
         JAVASCRIPT: z.string().min(1, { message: "JavaScript solution is required." }).optional(),
