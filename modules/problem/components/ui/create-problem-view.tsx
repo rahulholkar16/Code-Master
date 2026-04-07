@@ -160,8 +160,6 @@ export function CreateProblemView() {
                 referenceSolutions: referenceSolutionRecord,
             };
 
-            console.log("CODE SHIPPITES in UI ::", codeSnippetsRecord);
-
             await createProblem(body);
         } catch (error) {
             console.error("Error creating problem:", error);

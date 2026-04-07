@@ -25,8 +25,7 @@ export function ProblemDetailView({ id }: ProblemDetailViewProps) {
     }
 
     if (!problem) return notFound();
-    console.log("PROBLEM in DETAIL:: ", problem);
-    
+        
     return (
         <div className="h-[calc(100vh-4rem)] flex border-t border-border bg-muted/20">
             {/* Left Panel */}
