@@ -3,7 +3,7 @@
 import Editor from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { Play, Check } from "lucide-react";
-import { useTheme } from "next-themes"; // ✅ import add kiya
+import { useTheme } from "next-themes";
 
 import { Language } from "@/types";
 import { Button } from "@/components/ui/button";
