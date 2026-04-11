@@ -113,7 +113,7 @@ export function BasicInformation() {
                     <Select
                         value={difficulty}
                         onValueChange={(value) => {
-                            if (value) onDifficultyChange(value as Difficulty);
+                            if (value) onDifficultyChange(value.toUpperCase() as Difficulty);
                         }}
                     >
                         <SelectTrigger>
