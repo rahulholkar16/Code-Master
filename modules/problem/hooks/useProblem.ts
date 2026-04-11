@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query"
 import { createProblem } from "../api/create.api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export const useProblem = () => {
     const router = useRouter();
@@ -13,6 +14,7 @@ export const useProblem = () => {
                 return;                                                                                                                                                                                                                                                                             
             }
             toast.success(res.message);
+            revalidatePath("/problems");
             router.push("/problems");
         },
 
