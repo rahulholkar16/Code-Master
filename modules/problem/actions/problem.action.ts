@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { useAuthStore } from "@/modules/auth/store/auth-store";
+import { revalidatePath } from "next/cache";
 
 export const getAllProblem = async () => {
     try {
@@ -35,10 +37,10 @@ export const getProblemById = async (id: string) => {
                 id: id
             },
             include: {
-                tags: { include: { tag: true } },  
-                examples: true,                        
-                snippets: true,                         
-                solutions: true,                         
+                tags: { include: { tag: true } },
+                examples: true,
+                snippets: true,
+                solutions: true,
                 testCases: { where: { isHidden: false } },
             },
         });
@@ -54,6 +56,36 @@ export const getProblemById = async (id: string) => {
         return {
             success: false,
             message: "Something went wrong while fetching problem",
+        };
+    }
+};
+
+export const deleteProblemById = async (id: string) => {
+    try {
+        const { user } = useAuthStore.getState();
+
+        if (!user || user.role !== "ADMIN") {
+            return {
+                success: false,
+                message: "Unauthorized: Only admins can delete problems",
+            };
+        };
+
+        await db.problem.delete({
+            where: { id }
+        });
+
+        revalidatePath("/problems");
+        return {
+            success: true,
+            message: "Problems deleted successfully",
+        };
+    } catch (error) {
+        console.error("Error Deleteing problem:", error);
+
+        return {
+            success: false,
+            message: "Something went wrong while Deleteing problem",
         };
     }
 };
