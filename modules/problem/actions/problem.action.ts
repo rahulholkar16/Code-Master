@@ -6,12 +6,19 @@ import { revalidatePath } from "next/cache";
 
 export const getAllProblem = async () => {
     try {
+        const { user } = useAuthStore.getState();
+
         const problems = await db.problem.findMany({
             orderBy: {
                 createdAt: "desc",
             },
             include: {
                 tags: { include: { tag: true } },
+                solvedBy: {
+                    where: {
+                        userId: user?.id
+                    }
+                }
             },
         });
 
