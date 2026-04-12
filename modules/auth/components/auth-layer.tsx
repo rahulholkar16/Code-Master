@@ -10,7 +10,7 @@ const AuthLayer = ({ children }: ChildrenProps) => {
     if (isLoading)
         return (
             <div className="flex items-center justify-center h-screen">
-                <Spinner />
+                <Spinner className="size-8 text-amber-400"/>
             </div>
         );
 
