@@ -13,18 +13,19 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  role          UserRole  @default(USER)
-  problems      Problem[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  solvedProblems ProblemSolved[]
+  id              String    @id
+  name            String
+  email           String
+  emailVerified   Boolean   @default(false)
+  image           String?
+  role            UserRole  @default(USER)
+  problems        Problem[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  sessions        Session[]
+  accounts        Account[]
+  solvedProblems  ProblemSolved[]
+  submission      Submission[]
 
   @@unique([email])
   @@map("user")
@@ -102,6 +103,7 @@ model Problem {
   snippets          CodeSnippet[]
   solutions         ReferenceSolution[]
   solvedBy          ProblemSolved[]
+  submission        Submission[]
 
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
@@ -163,12 +165,53 @@ model ReferenceSolution {
 }
 
 model ProblemSolved {
-  id      String @id @default(uuid())
-  userId  String
+  id        String @id @default(uuid())
+  userId    String
   problemId String
   
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+}
+
+model Submission {
+  id              String @id @default(uuid())
+  userId          String
+  problemId       String
+  sourceCode      String
+  language        String
+  stdin           String?
+  stdout          String?
+  stderr          String?
+  compileOutput   String?
+  status          String
+  memory          String?
+  time            String?
+  testCaseResult  TestCaseResult[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  @@index([status])
+}
+
+model TestCaseResult {
+  id            String @id @default(uuid())
+  submmisionId  String
+  testCase      Int
+  passed        Boolean
+  stdout        String?
+  stderr        String?
+  compileOutput String?
+  status        String
+  memory        String?
+  time          String?
+  expected      String?
+
+  createdAt     DateTime @default(now())
+  submission    Submission @relation(fields: [submmisionId], references: [id], onDelete: Cascade)
+
+  @@index([submmisionId])
 }
