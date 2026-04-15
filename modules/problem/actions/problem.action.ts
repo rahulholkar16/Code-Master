@@ -183,7 +183,7 @@ export const executeCode = async (source_code: string, language_id: number, stdi
         }
 
         const testCaseResult = detailedResults.map((result) => ({
-            submissionid: submission.id,
+            submmisionId: submission.id,
             testCase: result.testCase,
             passed: result.passed,
             stdout: result.stdout,
@@ -201,7 +201,7 @@ export const executeCode = async (source_code: string, language_id: number, stdi
             where: {
                 id: submission.id
             },
-            include: { testCases: true }
+            include: { testCaseResult: true }
         });
 
         return {
