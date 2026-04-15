@@ -80,7 +80,6 @@ export function CodeEditor({
                 <Select
                     value={language}
                     onValueChange={(value) => {
-                        // ✅ null guard — value null ho sakta hai Select se
                         if (value) onLanguageChange(value as Language);
                     }}
                 >
