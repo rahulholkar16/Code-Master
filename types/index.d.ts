@@ -208,3 +208,33 @@ export interface ProblmStore {
     setSelectedProblem: (problem: Problem | null) => void;
     addProblem: (problem: Problem) => void;
 }
+
+interface ExecuteResponse {
+    success: boolean;
+    message?: string;
+    submission?: {
+        testCaseResult: ExecutionResult[];
+        stdout: string;
+        memory: string;
+        time: string;
+    };
+}
+
+interface ExecutionResult {
+    id: string;
+    submissionId: string;
+
+    testCase: number;
+    passed: boolean;
+
+    stdout: string | null;       // ✅ FIX
+    expected: string;
+
+    status: string;
+
+    stderr: string | null;
+    compileOutput: string | null;
+
+    memory: string | null;
+    time: string | null;
+}
