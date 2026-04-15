@@ -1,8 +1,8 @@
 "use client";
 
+import { useGetProblemById } from "../../hooks/useGetProblemById";
 import { notFound } from "next/navigation";
 import { useProblmStore } from "../../stores/problem-store";
-import { useGetProblemById } from "../../hooks/useGetProblemById";
 import { ProblemDescription } from "../problem-details/ProblemDescription";
 import { ProblemWorkspace } from "../problem-details/ProblemWorkSpace";
 import { ProblemHeader } from "../problem-details/ProblemHerder";
@@ -16,7 +16,7 @@ export function ProblemDetailView({ id }: ProblemDetailViewProps) {
 
     const problem = useProblmStore((s) => s.problems.find((p) => p.id === id));
 
-    if (isLoading && !problem) {
+    if (isLoading) {
         return (
             <div className="h-[calc(100vh-4rem)] flex items-center justify-center">
                 <p className="text-foreground/50 text-sm">Loading...</p>
@@ -25,7 +25,7 @@ export function ProblemDetailView({ id }: ProblemDetailViewProps) {
     }
 
     if (!problem) return notFound();
-        
+
     return (
         <div className="h-[calc(100vh-4rem)] flex border-t border-border bg-muted/20">
             {/* Left Panel */}
