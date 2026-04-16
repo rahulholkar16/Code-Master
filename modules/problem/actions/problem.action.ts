@@ -7,6 +7,8 @@ import { useAuthStore } from "@/modules/auth/store/auth-store";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { getLanguageName } from "../constant";
+import { StringDecoder } from "string_decoder";
+import { success } from "better-auth";
 
 export const getAllProblem = async () => {
     try {
@@ -217,4 +219,50 @@ export const executeCode = async (source_code: string, language_id: number, stdi
         };
     }
     
+};
+
+export const getAllSubmissionByUser = async (problemId: string) => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
+
+        if (!session) {
+            return {
+                success: false,
+                message: "Unauthorized",
+            };
+        }
+
+        if (!problemId) return {
+            success: false,
+            messgae: "Problem Id is required."
+        }
+
+        const submissions = await db.submission.findMany({
+            where: {
+                userId: session.user.id,
+                problemId,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+        });
+
+        console.log("submission::", submissions);
+        
+        return {
+            success: true,
+            submissions,
+            message: "Fetch successfully"
+        }
+
+    } catch (error) {
+        console.error("Error::", error);
+
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
 };
