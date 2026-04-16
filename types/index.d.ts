@@ -150,8 +150,11 @@ export interface ProblemUIStore {
     testCases: TestCase[];
     codeSnippets: CodeSnippet[];
     referenceSolutions: ReferenceSolution[];
+    submissions: ResSubmission[];
 
-    setTitle: (title: string) => void;
+    setSubmissions: (submission: ResSubmission[]) => void;
+
+    setTitle: (title: string) => vostringid;
     setTag: (tag: string) => void;
     setDifficulty: (difficulty: Difficulty) => void;
     removeTag: (tag: string) => void;
@@ -237,4 +240,21 @@ interface ExecutionResult {
 
     memory: string | null;
     time: string | null;
+}
+
+export interface ResSubmission {
+    id: string;
+    userId: string;
+    problemId: string;
+    sourceCode: string;
+    language: 'JAVASCRIPT' | 'PYTHON' | 'JAVA' | 'CPP';
+    stdin: string;
+    stdout: string | null;
+    stderr: string | null;
+    compileOutput: string | null;
+    status: 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Runtime Error' | 'Compile Error';
+    memory: string[];
+    time: string[];
+    createdAt: string;
+    updatedAt: string;
 }
