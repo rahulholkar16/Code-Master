@@ -37,7 +37,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     testCases: [createEmptyTestCase()],
     codeSnippets: [createEmptyCodeSnippet()],
     referenceSolutions: [createEmptyReferenceSolution()],
-
+    submissions: [],
     setTitle: (title) => set({ title }),
     setTag: (tag) => set((state) => ({
         tags: (state.tags as Array<string>).includes(tag) ? state.tags : [...state.tags, tag],
@@ -95,5 +95,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     })),
     updateReferenceSolution: (id, field, value) => set((state) => ({
         referenceSolutions: state.referenceSolutions.map((referenceSolution) => referenceSolution.id === id ? {...referenceSolution, [field]: value} : referenceSolution)
-    }))
+    })),
+
+    setSubmissions: (submissions) => set({ submissions })
 }));
