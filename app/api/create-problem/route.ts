@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
         }
 
-        const body = (await request.json()) as CreateProblem;
+        const body = (await request.json()) as CreateProblem;        
         const { title, description, difficulty, tags, examples, constraints, testCases, codeSnippets, referenceSolutions } = body;
         if (!title || !description || !difficulty || !testCases || !codeSnippets || !referenceSolutions) return NextResponse.json({ success: false, error: "Missing field required" }, { status: 400 });
         if (!Array.isArray(testCases) || testCases.length === 0) return NextResponse.json({ success: false, error: "At least one test case is required" }, { status: 400 });
