@@ -52,6 +52,7 @@ services:
       - redis
     volumes:
       - ./judge0.conf:/judge0.conf:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw   # ✅ IMPORTANT
     ports:
       - "2358:2358"
     privileged: true
@@ -67,6 +68,7 @@ services:
       - redis
     volumes:
       - ./judge0.conf:/judge0.conf:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw   # ✅ IMPORTANT
     privileged: true
     restart: always
     <<: *default-logging

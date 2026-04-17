@@ -88,13 +88,15 @@ services:
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      NODE_ENV: production
+      NODE_ENV: development
     container_name: leetcode_app
     depends_on:
       app-db:
         condition: service_healthy
     ports:
       - "3000:3000"
+    volumes:
+      - ./prisma:/app/prisma
     restart: unless-stopped
     <<: *default-logging
 
