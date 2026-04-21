@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Language, Problem, ExecuteResponse, ExecutionResult} from "@/types";
+import { ExecuteResponse, ExecutionResult, Language, Problem } from "@/types";
 import { useProblmStore } from "../../stores/problem-store";
 import { TestResultPanel } from "./TestResultPanel";
 import { CodeEditor } from "./CodeEditor";
@@ -9,6 +9,7 @@ import { getJudge0LanguageId } from "@/lib/judge0";
 import { executeCode } from "../../actions/problem.action";
 import { toast } from "sonner";
 import TestCases from "./TestCase";
+import { useUiProblmStore } from "../../stores/problem-ui-store";
 
 interface ProblemWorkspaceProps {
     initialProblem: Problem;
@@ -17,6 +18,7 @@ interface ProblemWorkspaceProps {
 export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
     const { selectedProblem, setSelectedProblem, getProblemById, addProblem } =
         useProblmStore();
+    const setSubmissions = useUiProblmStore((s) => s.setSubmissions);
 
     const [results, setResults] = useState<ExecutionResult[]>([]);
     const [testResult, setTestResult] = useState<"pass" | "fail" | null>(null);
@@ -28,7 +30,7 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         setSelectedProblem(initialProblem);
 
         return () => setSelectedProblem(null);
-    }, [initialProblem]);
+    }, [addProblem, getProblemById, initialProblem, setSelectedProblem]);
 
     const problem = selectedProblem ?? initialProblem;
 
@@ -54,39 +56,47 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         setEditorCode(snippetCode);
     }, [snippetCode]);
 
+    const executeCurrentCode = async () => {
+        const language_id = getJudge0LanguageId(selectedLanguage);
+        const stdin = problem?.testCases?.map((tc) => tc.input) ?? [];
+        const expected_outputs =
+            problem?.testCases?.map((tc) => tc.output) ?? [];
+
+        return executeCode(
+            editorCode,
+            language_id,
+            stdin,
+            expected_outputs,
+            problem?.id,
+        );
+    };
+
+    const updateResults = (res: ExecuteResponse) => {
+        const testResults = res?.submission?.testCaseResult ?? [];
+
+        setResults(testResults);
+
+        const allPassed = testResults.every((r) => r.passed);
+        setTestResult(allPassed ? "pass" : "fail");
+
+        return allPassed;
+    };
+
     const handleRunCode = async () => {
         try {
-            const language_id = getJudge0LanguageId(selectedLanguage);
+            const res: ExecuteResponse = await executeCurrentCode();
 
-            const stdin = problem?.testCases?.map((tc) => tc.input) ?? [];
-            const expected_outputs =
-                problem?.testCases?.map((tc) => tc.output) ?? [];
-
-            const res: ExecuteResponse = await executeCode(
-                editorCode,
-                language_id,
-                stdin,
-                expected_outputs,
-                problem?.id,
-            );
-
-            if (!res?.success) {
+            if (!res?.success || !res.submission) {
                 toast.error("Execution failed");
                 return;
             }
 
-            const testResults = res?.submission?.testCaseResult;
-
-            setResults(testResults ?? []);
-
-            const allPassed = testResults?.every((r) => r.passed);
+            const allPassed = updateResults(res);
 
             if (allPassed) {
                 toast.success("All test cases passed 🚀");
-                setTestResult("pass");
             } else {
                 toast.error("Some test cases failed ❌");
-                setTestResult("fail");
             }
         } catch (error) {
             console.log(error);
@@ -94,8 +104,30 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         }
     };
 
-    const handleSubmit = () => {
-        setTestResult(Math.random() > 0.2 ? "pass" : "fail");
+    const handleSubmit = async () => {
+        try {
+            const res: ExecuteResponse = await executeCurrentCode();
+
+            if (!res?.success || !res.submission) {
+                toast.error(res?.message ?? "Submission failed");
+                return;
+            }
+
+            const allPassed = updateResults(res);
+            setSubmissions([
+                res.submission,
+                ...useUiProblmStore.getState().submissions,
+            ]);
+
+            if (allPassed) {
+                toast.success("Accepted");
+            } else {
+                toast.error("Wrong Answer");
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Submission failed");
+        }
     };
 
     return (
