@@ -6,7 +6,7 @@ import { useProblmStore } from "../../stores/problem-store";
 import { TestResultPanel } from "./TestResultPanel";
 import { CodeEditor } from "./CodeEditor";
 import { getJudge0LanguageId } from "@/lib/judge0";
-import { executeCode } from "../../actions/problem.action";
+import { executeCode, runCode } from "../../actions/problem.action";
 import { toast } from "sonner";
 import TestCases from "./TestCase";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
@@ -56,23 +56,18 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         setEditorCode(snippetCode);
     }, [snippetCode]);
 
-    const executeCurrentCode = async () => {
+    const getExecutionPayload = () => {
         const language_id = getJudge0LanguageId(selectedLanguage);
         const stdin = problem?.testCases?.map((tc) => tc.input) ?? [];
         const expected_outputs =
             problem?.testCases?.map((tc) => tc.output) ?? [];
 
-        return executeCode(
-            editorCode,
-            language_id,
-            stdin,
-            expected_outputs,
-            problem?.id,
-        );
+        return { expected_outputs, language_id, stdin };
     };
 
     const updateResults = (res: ExecuteResponse) => {
-        const testResults = res?.submission?.testCaseResult ?? [];
+        const testResults =
+            res.testCaseResult ?? res.submission?.testCaseResult ?? [];
 
         setResults(testResults);
 
@@ -84,10 +79,17 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
 
     const handleRunCode = async () => {
         try {
-            const res: ExecuteResponse = await executeCurrentCode();
+            const { expected_outputs, language_id, stdin } =
+                getExecutionPayload();
+            const res: ExecuteResponse = await runCode(
+                editorCode,
+                language_id,
+                stdin,
+                expected_outputs,
+            );
 
-            if (!res?.success || !res.submission) {
-                toast.error("Execution failed");
+            if (!res?.success || !res.testCaseResult) {
+                toast.error(res?.message ?? "Execution failed");
                 return;
             }
 
@@ -106,7 +108,15 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
 
     const handleSubmit = async () => {
         try {
-            const res: ExecuteResponse = await executeCurrentCode();
+            const { expected_outputs, language_id, stdin } =
+                getExecutionPayload();
+            const res: ExecuteResponse = await executeCode(
+                editorCode,
+                language_id,
+                stdin,
+                expected_outputs,
+                problem.id,
+            );
 
             if (!res?.success || !res.submission) {
                 toast.error(res?.message ?? "Submission failed");
