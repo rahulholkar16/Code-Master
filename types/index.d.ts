@@ -215,14 +215,15 @@ export interface ProblmStore {
 export interface ExecuteResponse {
     success: boolean;
     message?: string;
+    testCaseResult?: ExecutionResult[];
     submission?: ResSubmission & {
         testCaseResult: ExecutionResult[];
     };
 }
 
 export interface ExecutionResult {
-    id: string;
-    submmisionId: string;
+    id?: string;
+    submmisionId?: string;
 
     testCase: number;
     passed: boolean;
