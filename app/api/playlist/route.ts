@@ -1,10 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { difficulties } from "@/modules/home/constant";
-import { includes } from "better-auth";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { disconnect, title } from "process";
 
 export async function POST(request: NextRequest) {
     try {
@@ -51,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         const session = await auth.api.getSession({
             headers: await headers()
