@@ -1,8 +1,5 @@
 import { ProblemDetailView } from "@/modules/problem/components/ui/ProblemDetailView";
-
-interface ProblemDetailPageProps {
-    params: Promise<{ id: string }>;
-}
+import { ProblemDetailPageProps } from "@/types";
 
 export default async function ProblemDetailPage({
     params,

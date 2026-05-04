@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useProblmStore } from "@/modules/problem/stores/problem-store";
-import FilterBar, { FilterState } from "../FilterBar";
+import FilterBar from "../FilterBar";
 import ProblemsTable from "../ProblemsTable";
 import PaginationControls from "../PaginationControls";
+import { FilterState } from "@/types";
 
 const DEFAULT_FILTERS: FilterState = {
     searchQuery: "",

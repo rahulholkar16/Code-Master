@@ -14,15 +14,13 @@ import { useUiProblmStore } from "../stores/problem-ui-store";
 import { useEffect, useRef, useState } from "react";
 import { TestCase } from "@/types";
 
-type LocalTestCase = TestCase;
-
 export function TestCasesSection() {
     const testCases = useUiProblmStore((s) => s.testCases);
     const addTestCase = useUiProblmStore((s) => s.addTestCase);
     const removeTestCase = useUiProblmStore((s) => s.removeTestCase);
     const updateTestCase = useUiProblmStore((s) => s.updateTestCase);
 
-    const [localTestCases, setLocalTestCases] = useState<LocalTestCase[]>(testCases);
+    const [localTestCases, setLocalTestCases] = useState<TestCase[]>(testCases);
 
     const knownIdsRef = useRef<Set<string>>(
         new Set(testCases.map((t) => t.id)),

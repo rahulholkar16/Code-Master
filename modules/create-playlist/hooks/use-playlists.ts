@@ -11,7 +11,7 @@ import {
     removeProblemFromPlaylist,
     updatePlaylist,
 } from "../api/playlist.api";
-import { PlaylistPayload } from "../types/playlist";
+import { PlaylistPayload } from "@/types";
 import { usePlaylistStore } from "../stores/playlist-store";
 
 export const playlistQueryKey = ["playlists"] as const;

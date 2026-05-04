@@ -1,14 +1,10 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Problem } from "@/types";
+import { ProblemDescriptionProps } from "@/types";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
 import useGetAllSubmission from "../../hooks/useGetAllSubmission";
 import SubmissionsList from "./SubmissionList";
-
-interface ProblemDescriptionProps {
-    problem: Problem;
-}
 
 export function ProblemDescription({ problem }: ProblemDescriptionProps) {
     const submissions = useUiProblmStore(s => s.submissions);

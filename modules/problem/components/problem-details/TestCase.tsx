@@ -2,22 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { ExecutionResult } from "@/types";
-
-interface Example {
-    input: string;
-    output: string;
-    explanation?: string;
-}
-
-interface Problem {
-    examples: Example[];
-}
-
-interface TestCasesProps {
-    problem: Problem;
-    results?: ExecutionResult[];
-}
+import { TestCasesProps } from "@/types";
 
 export default function TestCases({ problem, results }: TestCasesProps) {
     const [activeCase, setActiveCase] = useState(0);

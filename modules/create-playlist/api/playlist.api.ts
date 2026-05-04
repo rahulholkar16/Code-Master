@@ -1,11 +1,4 @@
-import { Playlist, PlaylistPayload } from "../types/playlist";
-
-type PlaylistResponse = {
-    success: boolean;
-    message?: string;
-    playlists?: Playlist[];
-    playlist?: Playlist;
-};
+import { PlaylistPayload, PlaylistResponse } from "@/types";
 
 const parsePlaylistResponse = async (response: Response) => {
     const data = (await response.json()) as PlaylistResponse;

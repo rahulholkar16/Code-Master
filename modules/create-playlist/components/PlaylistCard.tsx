@@ -26,13 +26,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Playlist } from "../types/playlist";
-
-interface PlaylistCardProps {
-    playlist: Playlist;
-    onEdit: (playlist: Playlist) => void;
-    onDelete: (playlistId: string) => void;
-}
+import { PlaylistCardProps } from "@/types";
 
 export function PlaylistCard({
     playlist,

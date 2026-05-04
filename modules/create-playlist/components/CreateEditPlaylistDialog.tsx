@@ -14,14 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Playlist, PlaylistPayload } from "../types/playlist";
-
-interface CreateEditPlaylistDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onSave: (playlist: PlaylistPayload) => Promise<void>;
-    playlist?: Playlist | null;
-}
+import { CreateEditPlaylistDialogProps } from "@/types";
 
 export function CreateEditPlaylistDialog({
     open,

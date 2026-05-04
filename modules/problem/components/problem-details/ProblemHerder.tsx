@@ -1,9 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Problem } from "@/types";
-
-interface ProblemHeaderProps {
-    problem: Problem;
-}
+import { ProblemHeaderProps } from "@/types";
 
 export function ProblemHeader({ problem }: ProblemHeaderProps) {
     const getDifficultyColor = (difficulty: string) => {

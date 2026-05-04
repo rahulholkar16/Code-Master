@@ -1,18 +1,5 @@
 import { create } from "zustand";
-import { Playlist } from "../types/playlist";
-
-type PlaylistStore = {
-    playlists: Playlist[];
-    isCreateDialogOpen: boolean;
-    editingPlaylist: Playlist | null;
-    selectedPlaylistIds: Set<string>;
-    setPlaylists: (playlists: Playlist[]) => void;
-    openCreateDialog: () => void;
-    closeDialog: () => void;
-    setEditingPlaylist: (playlist: Playlist | null) => void;
-    setSelectedPlaylistIds: (playlistIds: Set<string>) => void;
-    toggleSelectedPlaylistId: (playlistId: string) => void;
-};
+import { PlaylistStore } from "@/types";
 
 export const usePlaylistStore = create<PlaylistStore>((set) => ({
     playlists: [],

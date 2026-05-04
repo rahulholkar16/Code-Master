@@ -5,15 +5,7 @@ import {
     ChevronsLeft,
     ChevronsRight,
 } from "lucide-react";
-
-interface PaginationControlsProps {
-    currentPage: number;
-    totalPages: number;
-    itemsPerPage: number;
-    totalItems: number;
-    onPageChange: (page: number) => void;
-    onItemsPerPageChange: (itemsPerPage: number) => void;
-}
+import { PaginationControlsProps } from "@/types";
 
 export default function PaginationControls({
     currentPage,

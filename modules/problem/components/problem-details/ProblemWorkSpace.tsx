@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ExecuteResponse, ExecutionResult, Language, Problem } from "@/types";
+import {
+    ExecuteResponse,
+    ExecutionResult,
+    Language,
+    ProblemWorkspaceProps,
+} from "@/types";
 import { useProblmStore } from "../../stores/problem-store";
 import { TestResultPanel } from "./TestResultPanel";
 import { CodeEditor } from "./CodeEditor";
@@ -10,10 +15,6 @@ import { executeCode, runCode } from "../../actions/problem.action";
 import { toast } from "sonner";
 import TestCases from "./TestCase";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
-
-interface ProblemWorkspaceProps {
-    initialProblem: Problem;
-}
 
 export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
     const { selectedProblem, setSelectedProblem, getProblemById, addProblem } =

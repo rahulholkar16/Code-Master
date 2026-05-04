@@ -1,8 +1,5 @@
 import { Check, X } from "lucide-react";
-
-interface TestResultPanelProps {
-    result: "pass" | "fail" | null;
-}
+import { TestResultPanelProps } from "@/types";
 
 export function TestResultPanel({ result }: TestResultPanelProps) {
     if (!result) return null;

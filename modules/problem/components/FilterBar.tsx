@@ -5,16 +5,7 @@ import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-
-interface FilterBarProps {
-    onFilterChange: (filters: FilterState) => void;
-}
-
-export interface FilterState {
-    searchQuery: string;
-    difficulty: string[];
-    topics: string[];
-}
+import { FilterBarProps } from "@/types";
 
 const DIFFICULTIES = ["Easy", "Medium", "Hard"];
 const TOPICS = [

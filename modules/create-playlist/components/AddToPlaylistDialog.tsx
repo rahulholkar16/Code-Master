@@ -17,13 +17,7 @@ import {
     useUpdateProblemPlaylists,
 } from "../hooks/use-playlists";
 import { usePlaylistStore } from "../stores/playlist-store";
-
-interface AddToPlaylistDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    problemId: string;
-    problemTitle: string;
-}
+import { AddToPlaylistDialogProps } from "@/types";
 
 export function AddToPlaylistDialog({
     open,

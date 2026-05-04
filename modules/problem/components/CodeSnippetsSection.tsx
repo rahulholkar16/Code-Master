@@ -21,8 +21,6 @@ import { useEffect, useRef, useState } from "react";
 import { CodeSnippet } from "@/types";
 import { languages } from "../constant";
 
-type LoaclCodeSnippets = CodeSnippet;
-
 export function CodeSnippetsSection() {
     const codeSnippets = useUiProblmStore((s) => s.codeSnippets);
     const addCodeSnippet = useUiProblmStore((s) => s.addCodeSnippet);
@@ -30,7 +28,7 @@ export function CodeSnippetsSection() {
     const removeCodeSnippet = useUiProblmStore((s) => s.removeCodeSnippet);
 
     const [loaclCodeSnippets, setLocalCodeSnippets] =
-        useState<LoaclCodeSnippets[]>(codeSnippets);
+        useState<CodeSnippet[]>(codeSnippets);
 
     const knownIdsRef = useRef<Set<string>>(
         new Set(codeSnippets.map((t) => t.id)),

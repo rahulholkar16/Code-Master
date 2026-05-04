@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 
 /**
  * Common Types 
@@ -255,4 +256,163 @@ export interface ResSubmission {
     time: string[];
     createdAt: string;
     updatedAt: string;
+}
+
+/**
+ * Component Props
+*/
+export type ButtonProps = ButtonPrimitive.Props & {
+        variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
+        size?: "default" | "xs" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg";
+        asChild?: boolean;
+    };
+
+export interface PaginationControlsProps {
+    currentPage: number;
+    totalPages: number;
+    itemsPerPage: number;
+    totalItems: number;
+    onPageChange: (page: number) => void;
+    onItemsPerPageChange: (itemsPerPage: number) => void;
+}
+
+export interface FilterState {
+    searchQuery: string;
+    difficulty: string[];
+    topics: string[];
+}
+
+export interface FilterBarProps {
+    onFilterChange: (filters: FilterState) => void;
+}
+
+export interface ProblemsTableProps {
+    problems: Problem[];
+}
+
+export interface ProblemDetailViewProps {
+    id: string;
+}
+
+export type ProblemDetailTab = "description" | "workspace";
+
+export interface ProblemDetailPageProps {
+    params: Promise<{ id: string }>;
+}
+
+export interface ProblemDescriptionProps {
+    problem: Problem;
+}
+
+export interface ProblemHeaderProps {
+    problem: Problem;
+}
+
+export interface ProblemWorkspaceProps {
+    initialProblem: Problem;
+}
+
+export interface TestResultPanelProps {
+    result: "pass" | "fail" | null;
+}
+
+export interface SubmissionListProps {
+    submissions: ResSubmission[];
+}
+
+export interface SubmissionStatsProps {
+    submissions: ResSubmission[];
+}
+
+export interface CodeEditorProps {
+    language: Language;
+    code: string;
+    availableLanguages: Language[];
+    onLanguageChange: (language: Language) => void;
+    onCodeChange: (code: string) => void;
+    onRunCode: () => void;
+    onSubmit: () => void;
+}
+
+export interface TestCaseExample {
+    input: string;
+    output: string;
+    explanation?: string;
+}
+
+export interface TestCaseProblem {
+    examples: TestCaseExample[];
+}
+
+export interface TestCasesProps {
+    problem: TestCaseProblem;
+    results?: ExecutionResult[];
+}
+
+/**
+ * Playlist Types
+*/
+export interface PlaylistProblem {
+    id: string;
+    title: string;
+    difficulty: Difficulty;
+}
+
+export interface Playlist {
+    id: string;
+    name: string;
+    description: string | null;
+    userId: string;
+    createdAt: string;
+    updateAt: string;
+    problems: {
+        id: string;
+        problemId: string;
+        problem: PlaylistProblem;
+    }[];
+}
+
+export interface PlaylistPayload {
+    name: string;
+    description?: string;
+}
+
+export interface PlaylistResponse {
+    success: boolean;
+    message?: string;
+    playlists?: Playlist[];
+    playlist?: Playlist;
+}
+
+export interface PlaylistStore {
+    playlists: Playlist[];
+    isCreateDialogOpen: boolean;
+    editingPlaylist: Playlist | null;
+    selectedPlaylistIds: Set<string>;
+    setPlaylists: (playlists: Playlist[]) => void;
+    openCreateDialog: () => void;
+    closeDialog: () => void;
+    setEditingPlaylist: (playlist: Playlist | null) => void;
+    setSelectedPlaylistIds: (playlistIds: Set<string>) => void;
+    toggleSelectedPlaylistId: (playlistId: string) => void;
+}
+
+export interface AddToPlaylistDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    problemId: string;
+    problemTitle: string;
+}
+
+export interface CreateEditPlaylistDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSave: (playlist: PlaylistPayload) => Promise<void>;
+    playlist?: Playlist | null;
+}
+
+export interface PlaylistCardProps {
+    playlist: Playlist;
+    onEdit: (playlist: Playlist) => void;
+    onDelete: (playlistId: string) => void;
 }

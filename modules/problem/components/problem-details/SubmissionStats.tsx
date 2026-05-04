@@ -1,11 +1,7 @@
-import { ResSubmission } from "@/types";
+import { SubmissionStatsProps } from "@/types";
 import { Check, X, Clock, AlertCircle } from "lucide-react";
 
-interface SubmissionsStatsProps {
-    submissions: ResSubmission[];
-}
-
-export function SubmissionsStats({ submissions }: SubmissionsStatsProps) {
+export function SubmissionsStats({ submissions }: SubmissionStatsProps) {
     if (submissions.length === 0) return null;
 
     const stats = {

@@ -12,16 +12,12 @@ import {
     Filter,
     Copy,
 } from "lucide-react";
-import { ResSubmission } from "@/types";
+import { ResSubmission, SubmissionListProps } from "@/types";
 import { SubmissionsStats } from "./SubmissionStats";
 import { formatSubmissionDate } from "../../constant";
 import { Button } from "@/components/ui/button";
 
-interface SubmissionsListProps {
-    submissions: ResSubmission[];
-}
-
-export default function SubmissionsList({ submissions }: SubmissionsListProps) {
+export default function SubmissionsList({ submissions }: SubmissionListProps) {
     const [expandedSubmission, setExpandedSubmission] = useState<string | null>(
         null,
     );

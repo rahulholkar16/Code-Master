@@ -1,11 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import { Problem } from "@/types";
+import { ProblemsTableProps } from "@/types";
 import Link from "next/link";
 import { getDifficultyColor } from "../constant";
-
-interface ProblemsTableProps {
-    problems: Problem[];
-}
 
 export default function ProblemsTable({ problems }: ProblemsTableProps) {
 

@@ -5,7 +5,7 @@ import type { editor } from "monaco-editor";
 import { Play, Check } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { Language } from "@/types";
+import { CodeEditorProps, Language } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
     Select,
@@ -14,16 +14,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-
-interface CodeEditorProps {
-    language: Language;
-    code: string;
-    availableLanguages: Language[];
-    onLanguageChange: (language: Language) => void;
-    onCodeChange: (code: string) => void;
-    onRunCode: () => void;
-    onSubmit: () => void;
-}
 
 const LANGUAGE_LABELS: Record<Language, string> = {
     Javascript: "JavaScript",

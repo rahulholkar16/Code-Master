@@ -7,16 +7,12 @@ import { useProblmStore } from "../../stores/problem-store";
 import { ProblemDescription } from "../problem-details/ProblemDescription";
 import { ProblemWorkspace } from "../problem-details/ProblemWorkSpace";
 import { ProblemHeader } from "../problem-details/ProblemHerder";
-
-interface ProblemDetailViewProps {
-    id: string;
-}
-
-type Tab = "description" | "workspace";
+import { ProblemDetailTab, ProblemDetailViewProps } from "@/types";
 
 export function ProblemDetailView({ id }: ProblemDetailViewProps) {
     const { isLoading } = useGetProblemById(id);
-    const [activeTab, setActiveTab] = useState<Tab>("description");
+    const [activeTab, setActiveTab] =
+        useState<ProblemDetailTab>("description");
 
     const problem = useProblmStore((s) => s.problems.find((p) => p.id === id));
 
@@ -34,7 +30,7 @@ export function ProblemDetailView({ id }: ProblemDetailViewProps) {
         <div className="h-[calc(100vh-4rem)] flex flex-col border-t border-border bg-muted/20">
             {/* ── Mobile tab bar (hidden on lg+) ── */}
             <div className="flex lg:hidden border-b border-border bg-background shrink-0">
-                {(["description", "workspace"] as Tab[]).map((tab) => (
+                {(["description", "workspace"] as ProblemDetailTab[]).map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}

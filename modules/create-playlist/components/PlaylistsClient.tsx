@@ -9,7 +9,7 @@ import {
     usePlaylists,
     useUpdatePlaylist,
 } from "../hooks/use-playlists";
-import { PlaylistPayload } from "../types/playlist";
+import { PlaylistPayload } from "@/types";
 import { usePlaylistStore } from "../stores/playlist-store";
 import { CreateEditPlaylistDialog } from "./CreateEditPlaylistDialog";
 import { PlaylistCard } from "./PlaylistCard";
