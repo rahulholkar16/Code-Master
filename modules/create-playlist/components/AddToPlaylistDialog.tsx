@@ -81,13 +81,15 @@ export function AddToPlaylistDialog({
                 currentPlaylistIds.has(playlist.id),
         );
 
-        const result = await updateProblemPlaylistsMutation.mutateAsync({
-            problemId,
-            playlistsToAdd: playlistsToAdd.map((playlist) => playlist.id),
-            playlistsToRemove: playlistsToRemove.map(
-                (playlist) => playlist.id,
-            ),
-        }).catch(() => null);
+        const result = await updateProblemPlaylistsMutation
+            .mutateAsync({
+                problemId,
+                playlistsToAdd: playlistsToAdd.map((playlist) => playlist.id),
+                playlistsToRemove: playlistsToRemove.map(
+                    (playlist) => playlist.id,
+                ),
+            })
+            .catch(() => null);
 
         if (!result) return;
 
@@ -152,8 +154,8 @@ export function AddToPlaylistDialog({
                                                     )}
                                                 </span>
                                                 <span className="block text-sm text-muted-foreground">
-                                                    {playlist.problems?.length ??
-                                                        0}{" "}
+                                                    {playlist.problems
+                                                        ?.length ?? 0}{" "}
                                                     problems
                                                 </span>
                                             </span>
