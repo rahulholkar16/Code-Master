@@ -362,6 +362,7 @@ export interface Playlist {
     id: string;
     name: string;
     description: string | null;
+    isPublic: boolean;
     userId: string;
     createdAt: string;
     updateAt: string;
@@ -375,6 +376,7 @@ export interface Playlist {
 export interface PlaylistPayload {
     name: string;
     description?: string;
+    isPublic: boolean;
 }
 
 export interface PlaylistResponse {

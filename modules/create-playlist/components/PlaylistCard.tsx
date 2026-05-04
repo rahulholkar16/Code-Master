@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
     Calendar,
     Edit,
+    Globe,
     ListChecks,
     Lock,
     MoreVertical,
@@ -48,7 +49,11 @@ export function PlaylistCard({
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                         <div className="mb-2 flex items-center gap-2">
-                            <Lock className="size-4 text-yellow-500" />
+                            {playlist.isPublic ? (
+                                <Globe className="size-4 text-green-500" />
+                            ) : (
+                                <Lock className="size-4 text-yellow-500" />
+                            )}
                             <CardTitle className="truncate text-xl">
                                 <Link
                                     href={`/playlist/${playlist.id}`}
@@ -102,8 +107,11 @@ export function PlaylistCard({
                     <span>Updated {formattedDate}</span>
                 </div>
 
-                <Badge variant="secondary" className="text-xs">
-                    Private
+                <Badge
+                    variant={playlist.isPublic ? "outline" : "secondary"}
+                    className="text-xs"
+                >
+                    {playlist.isPublic ? "Public" : "Private"}
                 </Badge>
             </CardContent>
 

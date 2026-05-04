@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { Check, Loader2, Lock, Plus } from "lucide-react";
+import { Check, Globe, Loader2, Lock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -139,7 +139,11 @@ export function AddToPlaylistDialog({
                                             />
                                             <span className="min-w-0 flex-1 space-y-1">
                                                 <span className="flex items-center gap-2">
-                                                    <Lock className="size-3 text-yellow-500" />
+                                                    {playlist.isPublic ? (
+                                                        <Globe className="size-3 text-green-500" />
+                                                    ) : (
+                                                        <Lock className="size-3 text-yellow-500" />
+                                                    )}
                                                     <span className="truncate font-medium leading-none">
                                                         {playlist.name}
                                                     </span>

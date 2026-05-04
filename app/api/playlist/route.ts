@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
             success: false, message: "User not found"
         }, { status: 404 });
 
-        const { name, description } = await request.json();
+        const { name, description, isPublic } = await request.json();
 
         if (!name) return NextResponse.json({
             success: false, message: "Playlist name is required."
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
             data: {
                 name: name.trim(),
                 description: description?.trim() || null,
+                isPublic: Boolean(isPublic),
                 userId: dbUser.id,
             },
             include: {
@@ -128,7 +129,7 @@ export async function PATCH(request: NextRequest) {
         }
 
         const playlistId = request.nextUrl.searchParams.get("id");
-        const { name, description } = await request.json();
+        const { name, description, isPublic } = await request.json();
 
         if (!playlistId) return NextResponse.json({
             success: false, message: "Playlist id is required."
@@ -146,6 +147,7 @@ export async function PATCH(request: NextRequest) {
             data: {
                 name: name.trim(),
                 description: description?.trim() || null,
+                isPublic: Boolean(isPublic),
             },
             include: {
                 problems: {

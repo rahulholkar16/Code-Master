@@ -24,17 +24,20 @@ export function CreateEditPlaylistDialog({
 }: CreateEditPlaylistDialogProps) {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [isPublic, setIsPublic] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         if (playlist) {
             setName(playlist.name);
             setDescription(playlist.description ?? "");
+            setIsPublic(playlist.isPublic);
             return;
         }
 
         setName("");
         setDescription("");
+        setIsPublic(true);
     }, [playlist, open]);
 
     const handleSave = async () => {
@@ -45,11 +48,13 @@ export function CreateEditPlaylistDialog({
             await onSave({
                 name: name.trim(),
                 description: description.trim(),
+                isPublic,
             });
 
             if (!playlist) {
                 setName("");
                 setDescription("");
+                setIsPublic(true);
             }
         } finally {
             setIsSaving(false);
@@ -96,6 +101,35 @@ export function CreateEditPlaylistDialog({
                             rows={3}
                             disabled={isSaving}
                         />
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                        <div className="space-y-0.5">
+                            <Label htmlFor="playlist-public">
+                                Public Playlist
+                            </Label>
+                            <p className="text-sm text-muted-foreground">
+                                Allow others to view and use this playlist
+                            </p>
+                        </div>
+                        <button
+                            id="playlist-public"
+                            type="button"
+                            role="switch"
+                            aria-checked={isPublic}
+                            disabled={isSaving}
+                            onClick={() => setIsPublic((current) => !current)}
+                            className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full bg-muted transition-colors outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 aria-checked:bg-primary"
+                        >
+                            <span className="sr-only">Public playlist</span>
+                            <span
+                                className={`size-4 rounded-full bg-background shadow transition-transform ${
+                                    isPublic
+                                        ? "translate-x-4"
+                                        : "translate-x-0.5"
+                                }`}
+                            />
+                        </button>
                     </div>
                 </div>
 
