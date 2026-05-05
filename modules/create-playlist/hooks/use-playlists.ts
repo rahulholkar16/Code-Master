@@ -91,6 +91,22 @@ export const useDeletePlaylist = () => {
     });
 };
 
+export const useRemoveProblemFromPlaylist = (playlistId: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (problemId: string) =>
+            removeProblemFromPlaylist(playlistId, problemId),
+        onSuccess: async () => {
+            toast.success("Problem removed from playlist.");
+            await queryClient.invalidateQueries({ queryKey: playlistQueryKey });
+        },
+        onError: () => {
+            toast.error("Failed to remove problem. Please try again.");
+        },
+    });
+};
+
 export const useUpdateProblemPlaylists = (problemTitle: string) => {
     const queryClient = useQueryClient();
 
