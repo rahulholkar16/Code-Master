@@ -45,3 +45,5 @@ next-env.d.ts
 .gitignore
 .dockerignore
 Dockerfile.studio
+.agents
+.codex
