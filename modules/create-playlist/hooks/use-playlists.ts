@@ -91,6 +91,30 @@ export const useDeletePlaylist = () => {
     });
 };
 
+export const useAddProblemsToPlaylist = (playlistId: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (problemIds: string[]) =>
+            Promise.all(
+                problemIds.map((problemId) =>
+                    addProblemToPlaylist(playlistId, problemId),
+                ),
+            ),
+        onSuccess: async (_, problemIds) => {
+            toast.success(
+                problemIds.length === 1
+                    ? "Problem added to playlist."
+                    : `${problemIds.length} problems added to playlist.`,
+            );
+            await queryClient.invalidateQueries({ queryKey: playlistQueryKey });
+        },
+        onError: () => {
+            toast.error("Failed to add problems. Please try again.");
+        },
+    });
+};
+
 export const useRemoveProblemFromPlaylist = (playlistId: string) => {
     const queryClient = useQueryClient();
 

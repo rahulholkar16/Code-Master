@@ -12,8 +12,10 @@ import {
     Loader2,
     Lock,
     MoreVertical,
+    Plus,
     Trash2,
 } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +35,7 @@ import {
     useUpdatePlaylist,
 } from "../hooks/use-playlists";
 import { usePlaylistStore } from "../stores/playlist-store";
+import { AddProblemsToPlaylistDialog } from "./AddProblemsToPlaylistDialog";
 import { CreateEditPlaylistDialog } from "./CreateEditPlaylistDialog";
 
 interface PlaylistDetailClientProps {
@@ -48,6 +51,7 @@ const formatDate = (date: string) =>
 
 export function PlaylistDetailClient({ id }: PlaylistDetailClientProps) {
     const router = useRouter();
+    const [isAddProblemsOpen, setIsAddProblemsOpen] = useState(false);
     const { data: session } = useSession();
     const playlists = usePlaylistStore((state) => state.playlists);
     const editingPlaylist = usePlaylistStore((state) => state.editingPlaylist);
@@ -182,41 +186,72 @@ export function PlaylistDetailClient({ id }: PlaylistDetailClientProps) {
                         </div>
 
                         {isOwner && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        aria-label="Playlist actions"
-                                    >
-                                        <MoreVertical className="size-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            setEditingPlaylist(playlist)
-                                        }
-                                    >
-                                        <Edit className="mr-2 size-4" />
-                                        Edit Playlist
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                        onClick={handleDeletePlaylist}
-                                        variant="destructive"
-                                    >
-                                        <Trash2 className="mr-2 size-4" />
-                                        Delete Playlist
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    onClick={() => setIsAddProblemsOpen(true)}
+                                    className="gap-2"
+                                >
+                                    <Plus className="size-4" />
+                                    Add Problems
+                                </Button>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            aria-label="Playlist actions"
+                                        >
+                                            <MoreVertical className="size-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                setEditingPlaylist(playlist)
+                                            }
+                                        >
+                                            <Edit className="mr-2 size-4" />
+                                            Edit Playlist
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            onClick={handleDeletePlaylist}
+                                            variant="destructive"
+                                        >
+                                            <Trash2 className="mr-2 size-4" />
+                                            Delete Playlist
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                         )}
                     </div>
                 </div>
 
+                <div className="mb-4 flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h2 className="text-xl font-semibold">Problems</h2>
+                        <p className="text-sm text-muted-foreground">
+                            {problemCount > 0
+                                ? `${problemCount} problem${problemCount > 1 ? "s" : ""} saved in this playlist`
+                                : "Build this playlist by adding problems below"}
+                        </p>
+                    </div>
+                    {isOwner && problemCount > 0 && (
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsAddProblemsOpen(true)}
+                            className="gap-2 sm:self-start"
+                        >
+                            <Plus className="size-4" />
+                            Add Problems
+                        </Button>
+                    )}
+                </div>
+
                 {problemCount > 0 ? (
-                    <div className="overflow-hidden rounded-lg border border-border bg-card">
+                    <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead>
@@ -291,27 +326,45 @@ export function PlaylistDetailClient({ id }: PlaylistDetailClientProps) {
                         </div>
                     </div>
                 ) : (
-                    <div className="rounded-lg border border-border bg-card py-16 text-center">
-                        <ListChecks className="mx-auto mb-4 size-12 text-foreground/30" />
-                        <p className="mb-4 text-lg text-foreground/50">
+                    <div className="rounded-lg border border-dashed bg-card py-16 text-center shadow-sm">
+                        <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-muted">
+                            <ListChecks className="size-7 text-foreground/40" />
+                        </div>
+                        <p className="mb-2 text-lg font-medium">
                             This playlist is empty
                         </p>
-                        <p className="text-sm text-foreground/40">
-                            Add problems to this playlist from the problem
-                            detail pages
+                        <p className="mx-auto mb-6 max-w-md text-sm text-muted-foreground">
+                            Add problems directly from here and start building
+                            a focused practice set.
                         </p>
+                        {isOwner && (
+                            <Button
+                                onClick={() => setIsAddProblemsOpen(true)}
+                                className="gap-2"
+                            >
+                                <Plus className="size-4" />
+                                Add Problems
+                            </Button>
+                        )}
                     </div>
                 )}
 
                 {isOwner && (
-                    <CreateEditPlaylistDialog
-                        open={!!editingPlaylist}
-                        onOpenChange={(open) => {
-                            if (!open) closeDialog();
-                        }}
-                        onSave={handleUpdatePlaylist}
-                        playlist={editingPlaylist}
-                    />
+                    <>
+                        <AddProblemsToPlaylistDialog
+                            open={isAddProblemsOpen}
+                            onOpenChange={setIsAddProblemsOpen}
+                            playlist={playlist}
+                        />
+                        <CreateEditPlaylistDialog
+                            open={!!editingPlaylist}
+                            onOpenChange={(open) => {
+                                if (!open) closeDialog();
+                            }}
+                            onSave={handleUpdatePlaylist}
+                            playlist={editingPlaylist}
+                        />
+                    </>
                 )}
             </div>
         </div>
