@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
                 },
             },
             update: {},
-            data: {
+            create: {
                 problemId,
                 playlistId: normalizedPlaylistId,
             },
