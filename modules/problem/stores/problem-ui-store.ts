@@ -1,28 +1,35 @@
 import { CodeSnippet, Example, ProblemUIStore, ReferenceSolution, TestCase } from "@/types";
 import { create } from "zustand";
 
+const generateId = () => {
+    if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
+        return window.crypto.randomUUID();
+    }
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 const createEmptyExample = (): Example => ({
-    id: crypto.randomUUID(),
+    id: generateId(),
     input: "",
     output: "",
     explanation: "",
 });
 
 const createEmptyTestCase = (): TestCase => ({
-    id: crypto.randomUUID(),
+    id: generateId(),
     input: "",
     output: "",
     isHidden: false
 });
 
 const createEmptyCodeSnippet = (): CodeSnippet => ({
-    id: crypto.randomUUID(),
+    id: generateId(),
     language: "Javascript",
     code: "",
 });
 
 const createEmptyReferenceSolution = (): ReferenceSolution => ({
-    id: crypto.randomUUID(),
+    id: generateId(),
     language: "Javascript",
     code: "",
 });
@@ -71,10 +78,10 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
         testCases: [...state.testCases, createEmptyTestCase()],
     })),
     updateTestCase: (id, field, value) => set((state) => ({
-        testCases: state.testCases.map((testCase) => testCase.id === id ? {...testCase, [field]: value} : testCase)
+        testCases: state.testCases.map((testCase) => testCase.id === id ? { ...testCase, [field]: value } : testCase)
     })),
     removeTestCase: (id) => set((state) => ({
-        testCases: state.testCases.length  > 1 ? state.testCases.filter((testCase) => testCase.id !== id) : state.testCases
+        testCases: state.testCases.length > 1 ? state.testCases.filter((testCase) => testCase.id !== id) : state.testCases
     })),
 
     addCodeSnippet: () => set((state) => ({
@@ -84,7 +91,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
         codeSnippets: state.codeSnippets.length > 1 ? state.codeSnippets.filter((codeSnippet) => codeSnippet.id !== id) : state.codeSnippets
     })),
     updateCodeSnippet: (id, field, value) => set((state) => ({
-        codeSnippets: state.codeSnippets.map((codeSnippet) => codeSnippet.id === id ? {...codeSnippet, [field]: value} : codeSnippet)
+        codeSnippets: state.codeSnippets.map((codeSnippet) => codeSnippet.id === id ? { ...codeSnippet, [field]: value } : codeSnippet)
     })),
 
     addReferenceSolution: () => set((state) => ({
@@ -94,7 +101,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
         referenceSolutions: state.referenceSolutions.length > 1 ? state.referenceSolutions.filter((referenceSolution) => referenceSolution.id !== id) : state.referenceSolutions
     })),
     updateReferenceSolution: (id, field, value) => set((state) => ({
-        referenceSolutions: state.referenceSolutions.map((referenceSolution) => referenceSolution.id === id ? {...referenceSolution, [field]: value} : referenceSolution)
+        referenceSolutions: state.referenceSolutions.map((referenceSolution) => referenceSolution.id === id ? { ...referenceSolution, [field]: value } : referenceSolution)
     })),
 
     setSubmissions: (submissions) => set({ submissions })
