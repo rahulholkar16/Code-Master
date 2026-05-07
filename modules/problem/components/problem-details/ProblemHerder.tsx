@@ -1,7 +1,15 @@
+"use client";
+
+import { useState } from "react";
+import { ListPlus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AddToPlaylistDialog } from "@/modules/create-playlist/components/AddToPlaylistDialog";
 import { ProblemHeaderProps } from "@/types";
 
 export function ProblemHeader({ problem }: ProblemHeaderProps) {
+    const [isPlaylistDialogOpen, setIsPlaylistDialogOpen] = useState(false);
+
     const getDifficultyColor = (difficulty: string) => {
         switch (difficulty) {
             case "EASY":
@@ -16,12 +24,23 @@ export function ProblemHeader({ problem }: ProblemHeaderProps) {
     };
 
     return (
-        <div className="mb-6 pb-6 border-b border-border">
-            <div className="flex items-center gap-3 mb-4">
-                <h1 className="text-2xl font-bold">{problem.title}</h1>
+        <div className="mb-6 border-b border-border pb-6">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <h1 className="min-w-0 text-2xl font-bold">
+                    {problem.title}
+                </h1>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 sm:shrink-0"
+                    onClick={() => setIsPlaylistDialogOpen(true)}
+                >
+                    <ListPlus className="size-4" />
+                    Save to Playlist
+                </Button>
             </div>
 
-            <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
                 <Badge className={getDifficultyColor(problem.difficulty)}>
                     {problem.difficulty}
                 </Badge>
@@ -36,6 +55,13 @@ export function ProblemHeader({ problem }: ProblemHeaderProps) {
                     </Badge>
                 ))}
             </div>
+
+            <AddToPlaylistDialog
+                open={isPlaylistDialogOpen}
+                onOpenChange={setIsPlaylistDialogOpen}
+                problemId={problem.id}
+                problemTitle={problem.title}
+            />
         </div>
     );
 };
