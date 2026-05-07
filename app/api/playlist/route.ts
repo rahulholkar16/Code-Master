@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const session = await auth.api.getSession({ 
+        const session = await auth.api.getSession({
             headers: await headers()
         });
 
@@ -66,27 +66,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
     try {
-        const session = await auth.api.getSession({
-            headers: await headers()
-        });
-
-        if (!session) {
-            return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-        }
-
-        const dbUser = await db.user.findUnique({
-            where: {
-                id: session.user.id
-            }
-        });
-
-        if (!dbUser) return NextResponse.json({
-            success: false, message: "User not found"
-        }, { status: 404 });
-
         const playlists = await db.playList.findMany({
             where: {
-                userId: dbUser.id
+                OR: [
+                    { isPublic: true }
+                ]
             },
             include: {
                 problems: {
