@@ -2,16 +2,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { AvatarDropdownProp } from "@/types";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { redirect } from "next/navigation";
 
 export function AvatarDropdown({ user }: AvatarDropdownProp) {
     const { signOut } = useAuth();
-    async function handleLogOut () {
+
+    async function handleLogOut() {
         await signOut();
+    }
+
+    const handleProfileClick = () => {
+        redirect("/profile");
     };
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild className="flex items-center justify-center">
+            <DropdownMenuTrigger
+                asChild
+                className="flex items-center justify-center"
+            >
                 <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar>
                         {user?.image && (
@@ -30,19 +46,22 @@ export function AvatarDropdown({ user }: AvatarDropdownProp) {
 
             <DropdownMenuContent className="w-40">
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleProfileClick}>
+                        Profile
+                    </DropdownMenuItem>
                 </DropdownMenuGroup>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                    <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={handleLogOut}>
+                    <DropdownMenuItem
+                        className="text-red-500 focus:text-red-500"
+                        onClick={handleLogOut}
+                    >
                         Log out
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
             </DropdownMenuContent>
         </DropdownMenu>
     );
-};
+}
