@@ -3,11 +3,14 @@
 import { useMemo } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-import { DailySubmission } from "../data/userStats";
+interface DailySubmission {
+    date: string;
+    count: number;
+    problems: string[];
+}
 
 interface SubmissionCalendarProps {
-  submissions: DailySubmission[];
+    submissions: DailySubmission[];
 }
 
 export function SubmissionCalendar({ submissions }: SubmissionCalendarProps) {
