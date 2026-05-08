@@ -10,20 +10,8 @@ export function Footer() {
             { name: "About", path: "/about" },
             { name: "Profile", path: "/profile" },
         ],
-        resources: [
-            { name: "Documentation", path: "#" },
-            { name: "Tutorials", path: "#" },
-            { name: "Blog", path: "#" },
-        ],
         company: [
             { name: "About Us", path: "/about" },
-            { name: "Contact", path: "#" },
-            { name: "Careers", path: "#" },
-        ],
-        legal: [
-            { name: "Privacy Policy", path: "#" },
-            { name: "Terms of Service", path: "#" },
-            { name: "Cookie Policy", path: "#" },
         ],
     };
 
@@ -93,23 +81,6 @@ export function Footer() {
                         </ul>
                     </div>
 
-                    {/* Resources Links */}
-                    <div>
-                        <h3 className="font-semibold mb-4">Resources</h3>
-                        <ul className="space-y-3">
-                            {footerLinks.resources.map((link, index) => (
-                                <li key={index}>
-                                    <a
-                                        href={link.path}
-                                        className="text-foreground/60 hover:text-foreground text-sm transition-colors"
-                                    >
-                                        {link.name}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
                     {/* Company Links */}
                     <div>
                         <h3 className="font-semibold mb-4">Company</h3>
@@ -122,23 +93,6 @@ export function Footer() {
                                     >
                                         {link.name}
                                     </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Legal Links */}
-                    <div>
-                        <h3 className="font-semibold mb-4">Legal</h3>
-                        <ul className="space-y-3">
-                            {footerLinks.legal.map((link, index) => (
-                                <li key={index}>
-                                    <a
-                                        href={link.path}
-                                        className="text-foreground/60 hover:text-foreground text-sm transition-colors"
-                                    >
-                                        {link.name}
-                                    </a>
                                 </li>
                             ))}
                         </ul>
