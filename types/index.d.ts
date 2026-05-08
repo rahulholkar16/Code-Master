@@ -418,3 +418,17 @@ export interface PlaylistCardProps {
     onEdit: (playlist: Playlist) => void;
     onDelete: (playlistId: string) => void;
 }
+
+interface UserProfileData {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+    image: string | null;
+    role: Role;
+    createdAt: string;
+    updatedAt: string;
+    solvedProblems: SolvedProblem[];
+    submission: UserSubmission[];
+    playlists: Playlist[];
+}
