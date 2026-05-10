@@ -343,7 +343,7 @@ This project is licensed under the MIT License.
 
 # 👨‍💻 Author
 
-Built by Rahul Holkar.
+Built by Rahul.
 
 GitHub:
 [https://github.com/rahulholkar16](https://github.com/rahulholkar16)
