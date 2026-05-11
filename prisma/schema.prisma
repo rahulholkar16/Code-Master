@@ -26,7 +26,8 @@ model User {
   accounts        Account[]
   solvedProblems  ProblemSolved[]
   submission      Submission[]
-  playlists        PlayList[]
+  playlists       PlayList[]
+  stats           UserStats?
 
   @@unique([email])
   @@map("user")
@@ -244,4 +245,29 @@ model ProblemsInPlayList {
   problem    Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
   @@unique([problemId, playlistId])
+}
+
+model UserStats {
+  userId              String @id
+
+  totalSolved         Int @default(0)
+
+  easySolved          Int @default(0)
+  mediumSolved        Int @default(0)
+  hardSolved          Int @default(0)
+
+  totalSubmissions    Int @default(0)
+  acceptedSubmissions Int @default(0)
+
+  currentStreak       Int @default(0)
+  maxStreak           Int @default(0)
+
+  ranking             Int?
+
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([totalSolved])
+  @@index([ranking])
 }

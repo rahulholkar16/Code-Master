@@ -20,6 +20,8 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
       retries: 5
     <<: *default-logging
 
@@ -52,7 +54,7 @@ services:
       - redis
     volumes:
       - ./judge0.conf:/judge0.conf:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw   # ✅ IMPORTANT
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     ports:
       - "2358:2358"
     privileged: true
@@ -68,7 +70,7 @@ services:
       - redis
     volumes:
       - ./judge0.conf:/judge0.conf:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw   # ✅ IMPORTANT
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     privileged: true
     restart: always
     <<: *default-logging
@@ -78,7 +80,7 @@ services:
     image: oven/bun:1
     container_name: leetcode_app_dev
     working_dir: /app
-    command: sh -c "bun install && bunx prisma generate && bunx prisma migrate deploy && bun run dev"
+    command: sh -c "bun install && rm -rf prisma/generated && bunx prisma generate && bunx prisma migrate deploy && bun run dev"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
@@ -89,9 +91,9 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       NODE_ENV: development
     volumes:
-      - .:/app                          # ✅ Host code directly mount
-      - /app/node_modules               # ✅ node_modules container ka use hoga
-      - ./prisma:/app/prisma            # ✅ Migrations sync hongi
+      - .:/app
+      - /app/node_modules
+      - ./prisma:/app/prisma
     depends_on:
       app-db:
         condition: service_healthy
@@ -101,13 +103,11 @@ services:
     <<: *default-logging
 
   # 🔵 Prisma Studio
-  # 🔵 Prisma Studio
-  # 🔵 Prisma Studio
   prisma-studio:
     image: oven/bun:1
     container_name: leetcode_prisma_studio_dev
     working_dir: /app
-    command: sh -c "bun install && bunx prisma studio --port 5555 --browser none"
+    command: sh -c "bun install && rm -rf prisma/generated && bunx prisma generate && bunx prisma studio --port 5555 --browser none"
     environment:
       DATABASE_URL: ${DATABASE_URL}
     volumes:
