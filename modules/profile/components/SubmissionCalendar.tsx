@@ -3,15 +3,10 @@
 import { useMemo } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-interface DailySubmission {
-    date: string;
-    count: number;
-    problems: string[];
-}
-
-interface SubmissionCalendarProps {
-    submissions: DailySubmission[];
-}
+import type {
+  DailySubmission,
+  SubmissionCalendarProps,
+} from "../types/submission-calendar.types";
 
 export function SubmissionCalendar({ submissions }: SubmissionCalendarProps) {
   const weeks = useMemo(() => {
