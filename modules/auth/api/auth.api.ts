@@ -4,6 +4,7 @@ import { ActionResponse, SignInUserData, SignUpUserData } from "@/types";
 import { signInSchema, signUpSchema } from "@/modules/auth/validators/auth.validator";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { db } from "@/lib/db";
 
 export const signInUser = async ( data: SignInUserData ): Promise<ActionResponse<any>> => {
     const validated = signInSchema.safeParse(data);
@@ -78,6 +79,12 @@ export const signUpUser = async (data: SignUpUserData) => {
             };
         }
 
+        await db.userStats.create({
+            data: {
+                userId: result.user.id,
+            },
+        });
+        
         return {
             success: true,
             data: result,
