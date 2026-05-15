@@ -2,11 +2,15 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { pollBatchResults, submitBatch } from "@/lib/judge0";
 import { useAuthStore } from "@/modules/auth/store/auth-store";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { getLanguageName } from "../constant";
+import { submissionQueue } from "../queue/queue";
+import {
+    createPendingSubmission,
+    runJudge0TestCases,
+    validateExecutionPayload,
+} from "../services/submission.service";
 
 export const getAllProblem = async () => {
     try {
@@ -101,59 +105,6 @@ export const deleteProblemById = async (id: string) => {
     }
 };
 
-const runJudge0TestCases = async (
-    source_code: string,
-    language_id: number,
-    stdin: Array<string>,
-    expected_outputs: Array<string>,
-) => {
-    const submissions = stdin.map((input) => ({
-        source_code,
-        language_id,
-        stdin: input,
-        base64_encode: false,
-        wait: false,
-    }));
-
-    const submitResponse = await submitBatch(submissions);
-    const tokens = submitResponse.map((res) => res.token);
-    const results = await pollBatchResults(tokens);
-    let allPassed = true;
-
-    const testCaseResult = results.map((result, idx) => {
-        const stdout = result.stdout?.trim() ?? null;
-        const expected_output = expected_outputs[idx]?.trim() ?? null;
-        const passed = stdout === expected_output;
-        if (!passed) allPassed = false;
-
-        return {
-            testCase: idx + 1,
-            passed,
-            stdout,
-            expected: expected_output,
-            stderr: result.stderr,
-            compileOutput: result.compile_output,
-            status: result.status.description,
-            memory: result.memory ? `${result.memory} KB` : null,
-            time: result.time ? `${result.time} s` : null,
-        };
-    });
-
-    return { allPassed, testCaseResult };
-};
-
-const validateExecutionPayload = (
-    stdin: Array<string>,
-    expected_outputs: Array<string>,
-) => {
-    return (
-        Array.isArray(stdin) &&
-        stdin.length > 0 &&
-        Array.isArray(expected_outputs) &&
-        expected_outputs.length === stdin.length
-    );
-};
-
 export const runCode = async (
     source_code: string,
     language_id: number,
@@ -216,69 +167,28 @@ export const executeCode = async (source_code: string, language_id: number, stdi
             message: "Invalid testCases",
         }
 
-        const { allPassed, testCaseResult } = await runJudge0TestCases(
-            source_code,
-            language_id,
+        const submission = await createPendingSubmission({
+            userId: session.user.id,
+            problemId: problem_id,
+            sourceCode: source_code,
+            languageId: language_id,
             stdin,
-            expected_outputs,
-        );
-
-        const submission = await db.submission.create({
-            data: {
-                userId: session.user.id,
-                problemId: problem_id,
-                sourceCode: source_code,
-                language: getLanguageName(language_id),
-                stdin: stdin.join("\n"),
-                stdout: JSON.stringify(testCaseResult.map(r => r.stdout)),
-                stderr: testCaseResult.some(r => r.stderr) ? JSON.stringify(testCaseResult.map(r => r.stderr)) : null,
-                compileOutput: testCaseResult.some(r => r.compileOutput) ? JSON.stringify(testCaseResult.map(r => r.compileOutput)) : null,
-                status: allPassed ? "Accepted" : "Wrong Answer",
-                memory: testCaseResult.some(r => r.memory) ? JSON.stringify(testCaseResult.map(r => r.memory)) : null,
-                time: testCaseResult.some(r => r.time) ? JSON.stringify(testCaseResult.map(r => r.time)) : null,
-
-            }
         });
 
-        if (allPassed) {
-            await db.problemSolved.upsert({
-                where: {
-                    userId_problemId: {userId: session.user.id, problemId: problem_id},
-
-                },
-                update: {},
-                create: {
-                    userId: session.user.id,
-                    problemId: problem_id,
-                }
-            })
-        }
-
-        const persistedTestCaseResult = testCaseResult.map((result) => ({
-            submmisionId: submission.id,
-            testCase: result.testCase,
-            passed: result.passed,
-            stdout: result.stdout,
-            expected: result.expected,
-            stderr: result.stderr,
-            compileOutput: result.compileOutput,
-            status: result.status,
-            memory: result.memory,
-            time: result.time
-        }));
-
-        await db.testCaseResult.createMany({ data: persistedTestCaseResult });
-        
-        const submissionWithTestCases = await db.submission.findUnique({
-            where: {
-                id: submission.id
-            },
-            include: { testCaseResult: true }
+        await submissionQueue.add("process-submission", {
+            submissionId: submission.id,
+            userId: session.user.id,
+            problemId: problem_id,
+            sourceCode: source_code,
+            languageId: language_id,
+            stdin,
+            expectedOutputs: expected_outputs,
         });
 
         return {
             success: true,
-            submission: submissionWithTestCases
+            message: "Submission queued",
+            submission,
         }
     } catch (error) {
         console.error("Error submitting code:", error);
