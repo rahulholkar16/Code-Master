@@ -218,7 +218,7 @@ export interface ExecuteResponse {
     message?: string;
     testCaseResult?: ExecutionResult[];
     submission?: ResSubmission & {
-        testCaseResult: ExecutionResult[];
+        testCaseResult?: ExecutionResult[];
     };
 }
 
@@ -251,7 +251,7 @@ export interface ResSubmission {
     stdout: string | null;
     stderr: string | null;
     compileOutput: string | null;
-    status: 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Runtime Error' | 'Compile Error';
+    status: 'Pending' | 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Runtime Error' | 'Compile Error' | 'Compilation Error';
     memory: string[];
     time: string[];
     createdAt: string;
