@@ -124,11 +124,17 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
                 return;
             }
 
-            const allPassed = updateResults(res);
             setSubmissions([
                 res.submission,
                 ...useUiProblmStore.getState().submissions,
             ]);
+
+            if (res.submission.status === "Pending") {
+                toast.success("Submission queued");
+                return;
+            }
+
+            const allPassed = updateResults(res);
 
             if (allPassed) {
                 toast.success("Accepted");
