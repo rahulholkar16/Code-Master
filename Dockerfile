@@ -15,8 +15,9 @@ COPY . .
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-RUN rm -rf prisma/generated && bunx prisma generate
+RUN bunx prisma generate
 
+# Remove unnecessary Prisma engine binaries to reduce image size
 RUN find /app/node_modules/@prisma/engines -type f \
     ! -name "*.so.node" \
     ! -name "libquery*" \
@@ -41,14 +42,25 @@ ENV PORT=3000
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
+# Next.js build output
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Prisma schema + generated client (baked in — no volume mount at runtime)
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/generated ./prisma/generated
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
-# ✅ Production deps + @prisma builder se
+# App source needed at runtime
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
+COPY --from=builder --chown=nextjs:nodejs /app/lib ./lib
+COPY --from=builder --chown=nextjs:nodejs /app/modules ./modules
+COPY --from=builder --chown=nextjs:nodejs /app/types ./types
+
+# Production node_modules, with @prisma overlaid from builder
+# (builder has the generated client; prod-deps has everything else)
 COPY --from=prod-deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
@@ -56,4 +68,5 @@ USER nextjs
 
 EXPOSE 3000
 
+# Only the app service runs migrate; worker reuses this image with a CMD override
 CMD ["sh", "-c", "bunx prisma migrate deploy && bun server.js"]
