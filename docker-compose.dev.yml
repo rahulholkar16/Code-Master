@@ -13,9 +13,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -83,7 +80,15 @@ services:
     image: oven/bun:1
     container_name: leetcode_app_dev
     working_dir: /app
-    command: sh -c "bun install && rm -rf prisma/generated && bunx prisma generate && bunx prisma migrate deploy && bun run dev"
+    # bun install once, generate prisma client, migrate, then dev server
+    # rm -rf removed — named volume is already isolated, no need to wipe
+    command: >
+      sh -c "
+        bun install &&
+        bunx prisma generate &&
+        bunx prisma migrate deploy &&
+        bun run dev
+      "
     environment:
       DATABASE_URL: ${DATABASE_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
@@ -92,33 +97,80 @@ services:
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       NODE_ENV: development
     volumes:
       - .:/app
-      - /app/node_modules
-      - ./prisma:/app/prisma
+      - app_node_modules_dev:/app/node_modules          # named volume — avoids host/container uid conflicts
+      - app_prisma_generated_dev:/app/prisma/generated  # named volume — generated once by app, shared read-only by others
     depends_on:
       app-db:
         condition: service_healthy
+      redis:
+        condition: service_started
     ports:
       - "3000:3000"
     restart: unless-stopped
     <<: *default-logging
 
-  # 🔵 Prisma Studio
+  # 🟧 Submission Worker (DEV)
+  submission-worker:
+    image: oven/bun:1
+    container_name: leetcode_submission_worker_dev
+    working_dir: /app
+    # No bun install — shared node_modules volume already populated by app service
+    # No prisma generate — shared prisma/generated volume already populated by app service
+    # No rm -rf — caused Permission denied + Device busy errors when both services ran it simultaneously
+    command: >
+      sh -c "
+        bunx prisma generate &&
+        bun run worker:submission
+      "
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      NODE_ENV: development
+    volumes:
+      - .:/app
+      - app_node_modules_dev:/app/node_modules          # shared with app — already installed
+      - app_prisma_generated_dev:/app/prisma/generated  # shared with app — already generated
+    depends_on:
+      app-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      judge0-server:
+        condition: service_started
+      app:
+        condition: service_started  # ensures bun install + migrate have completed before worker starts
+    restart: unless-stopped
+    <<: *default-logging
+
+  # 🔵 Prisma Studio (DEV)
   prisma-studio:
     image: oven/bun:1
     container_name: leetcode_prisma_studio_dev
     working_dir: /app
-    command: sh -c "bun install && rm -rf prisma/generated && bunx prisma generate && bunx prisma studio --port 5555 --browser none"
+    # No bun install or prisma generate — both shared volumes already populated by app service
+    command: >
+      sh -c "
+        bunx prisma studio --port 5555 --browser none
+      "
     environment:
       DATABASE_URL: ${DATABASE_URL}
     volumes:
       - .:/app
-      - /app/node_modules
+      - app_node_modules_dev:/app/node_modules          # shared — already installed
+      - app_prisma_generated_dev:/app/prisma/generated  # shared — already generated
     depends_on:
       app-db:
         condition: service_healthy
+      app:
+        condition: service_started  # ensures prisma/generated is ready before studio starts
     ports:
       - "5555:5555"
     restart: unless-stopped
@@ -127,3 +179,5 @@ services:
 volumes:
   app_db_dev_data:
   judge0_db_dev_data:
+  app_node_modules_dev:       # named — survives restarts, populated once by app service
+  app_prisma_generated_dev:   # named — populated once by app service, shared read-only by worker + studio

@@ -4,6 +4,22 @@ x-logging: &default-logging
     options:
       max-size: 100M
 
+# Shared build definition — all main app services use the same image
+x-app-build: &app-build
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      DATABASE_URL: ${DATABASE_URL}
+
+# Shared runtime env for all main app services
+x-app-env: &app-env
+  DATABASE_URL: ${DATABASE_URL}
+  REDIS_HOST: ${REDIS_HOST}
+  REDIS_PORT: ${REDIS_PORT}
+  REDIS_PASSWORD: ${REDIS_PASSWORD}
+  NODE_ENV: production
+
 services:
   # 🟦 App Database
   app-db:
@@ -54,6 +70,7 @@ services:
       - redis
     volumes:
       - ./judge0.conf:/judge0.conf:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw  # required for Judge0 sandboxing
     ports:
       - "2358:2358"
     privileged: true
@@ -69,47 +86,61 @@ services:
       - redis
     volumes:
       - ./judge0.conf:/judge0.conf:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw  # required for Judge0 sandboxing
     privileged: true
     restart: always
     <<: *default-logging
 
-  # 🟩 App
+  # 🟩 App — runs migrate then starts Next.js
+  # CMD in Dockerfile: bunx prisma migrate deploy && bun server.js
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        DATABASE_URL: ${DATABASE_URL}
+    <<: *app-build
+    container_name: leetcode_app
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      <<: *app-env
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      NODE_ENV: development
-    container_name: leetcode_app
     depends_on:
       app-db:
         condition: service_healthy
+      redis:
+        condition: service_started
     ports:
       - "3000:3000"
-    volumes:
-      - ./prisma:/app/prisma
+    # No volume mounts — prisma/generated is baked into the image at build time
     restart: unless-stopped
     <<: *default-logging
 
-  # 🔵 Prisma Studio
+  # 🟧 Submission Worker — same image, skips migrate (app already ran it)
+  submission-worker:
+    <<: *app-build
+    container_name: leetcode_submission_worker
+    command: ["bun", "run", "worker:submission"]
+    environment:
+      <<: *app-env
+    depends_on:
+      app-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      judge0-server:
+        condition: service_started
+      app:
+        condition: service_started  # ensures migrate has completed before worker starts
+    restart: unless-stopped
+    <<: *default-logging
+
+  # 🔵 Prisma Studio — separate lightweight image (Dockerfile.studio)
+  # Main Dockerfile runs a full Next.js build — too heavy just for studio
   prisma-studio:
     build:
       context: .
       dockerfile: Dockerfile.studio
-      args:
-        DATABASE_URL: ${DATABASE_URL}
+    container_name: leetcode_prisma_studio
     environment:
       DATABASE_URL: ${DATABASE_URL}
     depends_on:
